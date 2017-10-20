@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>DNF Extractor</title>
+<script src="jquery.min.js" type="text/javascript"></script>
+<script src="jquery-ui.min.js" type="text/javascript"></script>
+<script src="jquery.exrpg.contextmenu.js" type="text/javascript"></script>
+<script src="jquery.wtooltip.min.js" type="text/javascript"></script>
+<script src="jquery.miniColors.js" type="text/javascript"></script>
+<script src="jquery.mousewheel.min.js" type="text/javascript"></script>
+<script src="utility.js" type="text/javascript"></script>
+<link href="jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="jquery-miniColors.css" rel="stylesheet" type="text/css"/>
+<link href="button.css" rel="stylesheet" type="text/css"/>
+
+<style type="text/css">
+*{
+	margin:0;
+	padding:0;
+	border:0;
+	cursor:default;
+}
+
+/* scrollbar started */
+::-webkit-scrollbar {
+    width: 14px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+	border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background: rgba(64,183,234,0.8); 
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(64,183,234,0.4); 
+}
+
+a,
+a:link,
+a:visited,
+a:active {
+	color: #756A4F;
+	text-decoration: none;
+	cursor:pointer;
+}
+a:hover {
+	color: #756A4F;
+	background-color: #ffe8af;
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+input,textarea {
+	resize: none;
+	cursor:text;
+	-webkit-border-radius:3px;
+}
+select {
+	border-color:#707070 #CECECE #CECECE #707070;
+	border-style:solid;
+	border-width:1px;
+	-webkit-border-radius:2px;
+	-webkit-appearance:none;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAJCAYAAAAGuM1UAAAAH0lEQVR42mNgoDnQ13f7TwiTpIkkm0hyHkl+YhhQAABcfyjsqSyTLgAAAABJRU5ErkJggg==") no-repeat scroll right center transparent;
+	padding-right: 14px;
+}
+
+ul,ol{list-style:none;}
+button,input,select,textarea{font-size:100%;}
+
+.h {display:none}
+
+.ti {
+	background:#FFF;
+	border-color:#707070 #CECECE #CECECE #707070;
+	border-style:solid;
+	border-width:1px;
+	color:#666666;
+	font-size:13px;
+	padding:2px 4px;
+	vertical-align:middle;
+	line-height:16px;
+}
+.toolTip {
+	border: #ffaed9 1px solid;
+	background-color:#ffe8f2;
+	padding: 5px;
+	font-size:14px;
+	color:#333;
+	text-align:left;
+}
+
+.dialog .taskbtn{
+	margin:5px 0px;
+	width: 100%;
+	text-align: left;
+}
+
+.dialog h1{
+	color:#383838;
+	font-size:13px;
+	margin-top:5px;
+	text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
+.dialog h2{
+	color:#c51b21;
+	font-size:13px;
+	margin-top:5px;
+	text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
+cashfont {
+	color:#c51b21;
+	font-weight:bold;
+	margin:0px 5px;
+}
+
+.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
+
+
+
+html{
+	font:12px/1.5 tahoma,arial,"微软雅黑",sans-serif;
+	height:100%;
+	box-sizing: border-box;
+	-webkit-user-select:none;
+	overflow:hidden;
+}
+
+body{
+	height:100%;
+	box-sizing: border-box;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	text-shadow: 0 1px 1px rgba(0,0,0,.2);
+}
+
+.boxh {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+}
+.boxv {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+}
+.boxauto {
+	-webkit-box-flex: 1;
+}
+.content {
+
+}
+.app_title {
+	background: url(images/title_bg.gif) repeat-x 0px 0px;
+}
+.app_title .logo {
+	background: url(images/title.gif) no-repeat;
+	height:43px;
+}
+
+.sheet {
+	border-top:#d3d3d3 1px solid;
+}
+.appui {
+	margin:8px;
+}
+
+.radios p {
+	margin:1px;
+	padding:1px;
+	padding-left:25px;
+	background:transparent url(images/checkbox_normal.png) no-repeat 2px 3px;
+	cursor:hand;
+}
+.radios p.checked {
+	background:transparent url(images/checkbox_checked.png) no-repeat 2px 3px;
+}
+.checkboxs p {
+	margin:1px;
+	padding:1px;
+	padding-left:25px;
+	background:transparent url("data:image/gif;base64,R0lGODlhDgANAPcAAPn8/mOrx7O1vfP5/fj4+Pb29vf39/T09PPz8/r9/v7+/mWvy8jK0M7P1dXq87a4wIXB2HO2z2Osx3CzzJPI3GSuyXC20I7F2ri6wbW3v8nL0be5wbS2vpHH283O1GSuyrq8xL2/xru9xGawzPX6/b2/x7i6wmmzzuTk5pvM3+rr7dPU2dzc38LZ4jKXynW50mWwy8vN0/Dx8sDCycrk7onD2eLx+PH1+Or0+j+ezj2eztfp80Ceze/2+WGu1WSw1ajT6DKXyU2l0jKVx16u1sLe7Mjf6JXH4NTp9D2dzHG11s/m8ubw9UOgzVKn0e3z9p/P58rj78zh6TOYyjSXyenx9dvt9j6dzFus1fT3+PHx8fLy8v39/fv7+/n5+fr6+vL5/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAOAA0AAAiNAMPIWKEhhocGDTzE0LBCRpgwDFB4+fKlSxeKXlAweDjDi4KHIMMo8DLjYYkvIUN+KfEQhJeUIL2AeGjiJcwwXkw8xGCAi8+fPg1geLihgMWjRwtsePjgAMWnTw88eJgBAQEvWLMSQJDhYQgWWrZs0RJ2LIsQD1WI4CCgrVsOIlQ8TEACjN27dkkkCBMQADs=") no-repeat 2px 3px;
+	cursor:hand;
+}
+.checkboxs p.checked {
+	background:transparent url("data:image/gif;base64,R0lGODlhDgANAPcAAPn8/mOrx7O1vfP5/fj4+Pb29vf39/T09PPz8/r9/v7+/mWvy8jK0M7P1dXq87a4wIXB2HO2z2Osx3CzzJPI3GSuyXC20I7F2ri6wbW3v8nL0be5wbS2vpHH283O1GSuyrq8xL2/xru9xGawzPX6/b2/x7i6wmmzzuTk5pvM3+rr7dPU2dzc38LZ4jKXynW50mWwy8vN0/Dx8sDCycrk7onD2eLx+PH1+Or0+j+ezj2eztfp80Ceze/2+WGu1WSw1ajT6DKXyU2l0jKVx16u1sLe7Mjf6JXH4NTp9D2dzHG11s/m8ubw9UOgzVKn0e3z9p/P58rj78zh6TOYyjSXyenx9dvt9j6dzFus1fT3+PHx8fLy8v39/fv7+/n5+fr6+vL5/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAOAA0AAAiuAAE4SFHjQgcKFDpcqJHCAYABEKR4+fKlSxeKTIxAGADmhRcFYUKGtCLEywswYCx8ERnSRo4kXyygPOGFZQIiU4JUOYFyRE0cSMJAcdFkiZcRKGEYAKIDS48rPHZwMQAD5YICUZy4+EGliMUCC1B+OPDlho8hRyh+OfABZQUEBLw8UZLFixcCCCqAGRChhZYtW7T8DdwiwgAANCZICMC4sYQJNACEeYiycuXDYQICADs=") no-repeat 2px 3px;
+}
+
+.checkbox {
+	margin:1px;
+	padding:1px;
+	padding-left:25px;
+	background:transparent url("data:image/gif;base64,R0lGODlhDgANAPcAAPn8/mOrx7O1vfP5/fj4+Pb29vf39/T09PPz8/r9/v7+/mWvy8jK0M7P1dXq87a4wIXB2HO2z2Osx3CzzJPI3GSuyXC20I7F2ri6wbW3v8nL0be5wbS2vpHH283O1GSuyrq8xL2/xru9xGawzPX6/b2/x7i6wmmzzuTk5pvM3+rr7dPU2dzc38LZ4jKXynW50mWwy8vN0/Dx8sDCycrk7onD2eLx+PH1+Or0+j+ezj2eztfp80Ceze/2+WGu1WSw1ajT6DKXyU2l0jKVx16u1sLe7Mjf6JXH4NTp9D2dzHG11s/m8ubw9UOgzVKn0e3z9p/P58rj78zh6TOYyjSXyenx9dvt9j6dzFus1fT3+PHx8fLy8v39/fv7+/n5+fr6+vL5/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAOAA0AAAiNAMPIWKEhhocGDTzE0LBCRpgwDFB4+fKlSxeKXlAweDjDi4KHIMMo8DLjYYkvIUN+KfEQhJeUIL2AeGjiJcwwXkw8xGCAi8+fPg1geLihgMWjRwtsePjgAMWnTw88eJgBAQEvWLMSQJDhYQgWWrZs0RJ2LIsQD1WI4CCgrVsOIlQ8TEACjN27dkkkCBMQADs=") no-repeat 2px 3px;
+	cursor:hand;
+}
+.checkbox.checked {
+	background:transparent url("data:image/gif;base64,R0lGODlhDgANAPcAAPn8/mOrx7O1vfP5/fj4+Pb29vf39/T09PPz8/r9/v7+/mWvy8jK0M7P1dXq87a4wIXB2HO2z2Osx3CzzJPI3GSuyXC20I7F2ri6wbW3v8nL0be5wbS2vpHH283O1GSuyrq8xL2/xru9xGawzPX6/b2/x7i6wmmzzuTk5pvM3+rr7dPU2dzc38LZ4jKXynW50mWwy8vN0/Dx8sDCycrk7onD2eLx+PH1+Or0+j+ezj2eztfp80Ceze/2+WGu1WSw1ajT6DKXyU2l0jKVx16u1sLe7Mjf6JXH4NTp9D2dzHG11s/m8ubw9UOgzVKn0e3z9p/P58rj78zh6TOYyjSXyenx9dvt9j6dzFus1fT3+PHx8fLy8v39/fv7+/n5+fr6+vL5/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAOAA0AAAiuAAE4SFHjQgcKFDpcqJHCAYABEKR4+fKlSxeKTIxAGADmhRcFYUKGtCLEywswYCx8ERnSRo4kXyygPOGFZQIiU4JUOYFyRE0cSMJAcdFkiZcRKGEYAKIDS48rPHZwMQAD5YICUZy4+EGliMUCC1B+OPDlho8hRyh+OfABZQUEBLw8UZLFixcCCCqAGRChhZYtW7T8DdwiwgAANCZICMC4sYQJNACEeYiycuXDYQICADs=") no-repeat 2px 3px;
+}
+
+.paletteview {
+	border:#d3d3d3 1px solid;
+	background:#FFF;
+	overflow-x:hidden;
+	overflow-y:scroll;
+}
+.paletteview div {
+	margin:1px;
+	float:left;
+	height:18px;
+	width: 18px;
+	background:transparent url("data:image/gif;base64,R0lGODlhDAAMAIABAMzMzP///yH5BAEAAAEALAAAAAAMAAwAAAIWhB+ph5ps3IMyQFBvzVRq3zmfGC5QAQA7");
+}
+
+.paletteview div>a {
+	display:block;
+	height:18px;
+	width: 18px;
+	outline:none;
+}
+
+.listview {
+	border:#d3d3d3 1px solid;
+	background:#FFF;
+	overflow-x:hidden;
+	overflow-y:scroll;
+}
+.listview p {
+	margin:1px;
+	padding-left:25px;
+	border:1px solid #FFF;
+	height:20px;
+	line-height: 20px;
+	color: #756A4F;
+	display: block;
+	text-decoration:none;
+	cursor:default;
+	white-space:nowrap;
+	overflow:hidden;
+	outline:none;
+}
+.listview p.lv_icon_ {
+	background:transparent url(images/listview_icon_normal.png) no-repeat 3px 3px;
+}
+
+.listview p.lv_icon_img1 {
+	background:transparent url(images/listview_icon_img1.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_img2 {
+	background:transparent url(images/listview_icon_img2.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_img4 {
+	background:transparent url(images/listview_icon_img4.png) no-repeat 3px 3px;
+	//color: rgb(0, 118, 163);
+}
+.listview p.lv_icon_img5 {
+	background:transparent url(images/listview_icon_img5.png) no-repeat 3px 3px;
+	//color: rgb(0, 118, 163);
+}
+.listview p.lv_icon_img6 {
+	background:transparent url(images/listview_icon_img6.png) no-repeat 3px 3px;
+	//color: rgb(182, 19, 24);
+}
+
+.listview p.lv_icon_wav, .listview p.lv_icon_ogg, .listview p.lv_icon_mp3 {
+	background:transparent url(images/listview_icon_sound.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_image {
+	background:transparent url(images/listview_icon_image.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_link {
+	background:transparent url(images/listview_icon_link.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_modified {
+	background:transparent url(images/listview_icon_modified.png) no-repeat 3px 3px;
+}
+
+.listview img {
+	height:16px;
+	width: 16px;
+	margin:1px 4px 0px 0px;
+	background:transparent url(images/checkbox_normal.png) no-repeat 2px 3px;
+}
+
+.listview img.checked {
+	background:transparent url(images/checkbox_checked.png) no-repeat 2px 3px;
+}
+
+.listview p:hover {
+	border:1px solid #40b7ea;
+	background-color:#79e8fc;
+}
+.listview p.selected {
+	border:1px solid #ecc242;
+	background-color:#ffdc87;
+}
+.listview.loading {
+	background:transparent url('images/loading43x11.gif') no-repeat 50% 50%;
+}
+
+
+.contextmenu {
+	border:1px solid #d3d3d3;
+	background-color:#f7f7f7;
+	position: absolute;
+	float:right;
+	left: 10px;
+	top: 10px;
+	display:none;
+	-webkit-box-shadow:2px 2px 5px #756B4B;
+}
+
+.contextmenu p {
+	margin:1px;
+	padding-left:25px;
+	padding-right:10px;
+	height:18px;
+	line-height: 18px;
+	border:1px solid #f7f7f7;
+	background:transparent no-repeat 1px 1px;
+	color: #756A4F;
+	display: block;
+	white-space:nowrap;
+}
+.contextmenu hr {
+	margin:1px 3px;
+	border-top:1px dashed;
+	border-color:#d3d3d3;
+}
+
+.contextmenu p.hover {
+	//border-color: #a5cf3d;
+	//background-color:#f2fddb;
+	border-color: #40b7ea;
+	background-color:#79e8fc;
+}
+
+.progress-note {
+	overflow:hidden;
+}
+
+
+.appviews {
+	margin-top:8px;
+}
+
+.appviews .lcolum {
+	width:230px;
+}
+.appviews .lcolum div:nth-child(3){
+	margin-top:8px;
+}
+.filesizebar {
+	padding-left: 20px;
+	margin-bottom:5px;
+}
+div.fsmatch {
+	background:url('images/filesize/match.png') no-repeat 0px 0px;
+}
+div.fssmall {
+	background:url('images/filesize/small.png') no-repeat 0px 0px;
+}
+div.fslarge {
+	background:url('images/filesize/large.png') no-repeat 0px 0px;
+}
+b.fsr {
+	color:red;
+}
+b.fsb {
+	color:blue;
+}
+
+.appviews .rcolum {
+	margin-left:8px;
+}
+
+#node2_list {
+	height:150px;
+}
+
+.misctoolbar>* {
+	margin-right:20px;
+}
+
+.imagebox {
+	border:1px solid #d3d3d3;
+	overflow:hidden;
+}
+
+.imagebox img {
+	cursor:crosshair;
+}
+
+.netui {
+	width:200px;
+	min-width:200px;
+	border-left:#d3d3d3 1px solid;
+	background:#f7f7f7;
+	padding: 0px 10px;
+	overflow:hidden;
+}
+
+.accountui {
+	-webkit-box-align:center;
+	padding-bottom: 10px;
+	border-bottom:#999 1px dashed;
+}
+.accountui .avatarimg {
+	font-size:0;
+}
+img.avatar {
+	padding:2px;
+	background:#fff;
+	border: 1px solid;
+	border-color:#F2F2F2 #CDCDCD #CDCDCD #F2F2F2;
+}
+.accountui .login, .accountui .info {
+	margin-left:8px;
+}
+
+.netui>div {
+	margin-top:5px;
+}
+.netui a {
+	cursor:pointer;
+	text-overflow: ellipsis;
+}
+.adpics img {
+	cursor:pointer;
+}
+
+.netui .hot {
+	overflow:hidden;
+}
+
+.netui .hotthreads li{
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	margin:2px auto;
+	border-bottom:1px #999 dotted;
+	padding: 2px 0px;
+}
+.netui .hotthreads li p{
+	color: #999;
+}
+.netui .hotthreads img{
+	vertical-align:bottom;
+}
+.netui .hotthreads li p:nth-child(2) span:nth-child(2){
+	float:right
+}
+
+a.author,
+a.author:link,
+a.author:visited,
+a.author:active {
+	color: #999;
+	text-decoration: none;
+	cursor:pointer;
+}
+a.author:hover {
+	color: #fff;
+	background: #999;
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+p.tip-warning {
+	margin: 2px auto;
+	padding: 2px 0px 2px 24px;
+	background:url('images/warning.png') no-repeat 4px center, #b81900 url(images/ui-bg_diagonals-thick_18_b81900_40x40.png) 50% 50% repeat;
+	border:1px dashed #cd0a0a;
+	color: #ffffff;
+}
+
+
+.notifybox {
+	color: #333;
+	padding: 8px 8px;
+	position: absolute;
+	top: -999px;
+
+	z-index: 99999999;
+	right:10px;
+	border-radius:0px 0px 5px 5px;
+	border: solid 1px #da7c0c;
+	background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
+	box-shadow: 0px 0px 8px #888;
+}
+.notifybox p{
+	padding-left:40px;
+}
+.notifybox p.info{
+	background:url('images/notify/info.png') no-repeat 0px center;
+}
+.notifybox p.stop{
+	background:url('images/notify/stop.png') no-repeat 0px center;
+}
+.notifybox p.warning{
+	background:url('images/notify/warning.png') no-repeat 0px center;
+}
+.notifybox b{
+	font-size:15px;
+	display:block;
+}
+
+</style>
+</head>
+
+<body>
+<div class="notifybox">
+<p><b></b><span></span></p>
+</div>
+
+<img class="newtip" src="images/tips/new.png" style="position: absolute;float:right;left: 650px;top: 6px;display:none;" />
+
+<div class='top'>
+	<div class="app_title movewindow">
+		<div class="logo"></div>
+	</div>
+</div>
+<div class='content boxauto boxh'>
+	<div class="sheet boxauto boxh">
+		<div class="appui boxauto boxv">
+			<div class="">
+				
+				<span>文件：</span><span id="_debug"></span>
+				<span><input class="ti" id="input_file" value="" placeholder="打开一个文件" /></span>
+				<span><button id="btn_open" class="button medium orange" openmode="openmode">选择文件</button></span>
+				<span><button id="btn_setting" class="button medium orange">软件设置</button></span>
+				<span><button id="btn_clearnpk" class="button medium green">一键清理非官方NPK</button></span>
+				<!-- <span><button id="btn_searchimg" class="button medium green">检索IMG</button></span> -->
+				<span class="h"><button id="btn_avatar" class="button medium green">DNF纸娃娃</button></span>
+				<span class="h"><button id="btn_easymoder" class="button medium green">一键换装</button></span>
+				<!-- <span><button id="btn_evalscript" class="button small white">脚本</button></span> -->
+			</div>
+			
+			<div class="appviews boxauto boxh">
+
+				<div class="lcolum boxv">
+					<div class="filesizebar fsmatch"></div>
+					<div id="node1_list" class="listview boxauto"></div>
+					<div><span>快速搜索：<input class="ti" id="input_quicksearch" value=""/></span></div>
+				</div>
+				<div class="rcolum boxv"><!-- no 'boxauto' -->
+					<div id="node2_list" class="listview"></div>
+					<div class="misctoolbar boxh" style="-webkit-box-align:baseline; margin: 2px auto">
+						<p id="checkbox_realcoords" class="checkbox">真实坐标显示</p>
+						<p id="checkbox_animated" class="checkbox">动画播放</p>
+						<p><span>背景颜色：</span><input type="hidden" id="input_picker_bg" size="6" /></p>
+						<p id="option_palette_index" class="h">
+							<span>调色板：</span><select id="select_palette_index"></select>
+							<span><button id="btn_modpalette" class="button small orange">查看</button></span>
+						</p>
+					</div>
+					<div class="misctoolbar boxh" style="-webkit-box-align:baseline; margin: 2px auto">
+						<p id="checkbox_dodge" class="checkbox">模拟线性减淡显示 / 保存</p>
+						<p id="checkbox_colormultiply" class="checkbox"><span>模拟染色显示 / 保存：</span></p>
+						<p style="margin-left:-20px"><input type="hidden" id="input_picker_cm" size="6" /></p>
+					</div>
+					<!-- 
+					<div class="misctoolbar boxh" style="-webkit-box-align:baseline; margin: 2px auto">
+						<p id="checkbox_coordscontrol_fixedx" class="checkbox">固定X轴</p>
+						<p id="checkbox_coordscontrol_fixedy" class="checkbox">固定Y轴</p>
+					</div>
+					<div class="misctoolbar boxh" style="-webkit-box-align:baseline; margin: 2px auto">
+						<span id="coordscontrol_num">坐标</span>
+						<span id="coordscontrol_offset">本次修改偏移</span>
+					</div>
+					-->
+					<div class="boxauto boxv">
+						<div class="imagebox boxauto" ref="mainview"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="netui boxv"><div></div>
+			<div class="accountui boxh">
+				<div class='avatarimg boxv'>
+					<p class='boxauto'><img class="avatar" src="images/account/noavatar_small.gif" /></p>
+					<p class=''><button id="btn_logout" class="button small white" style="margin-top:5px;" disabled="disabled">注销</button></p>
+				</div>
+				<div class='login '>
+					<p><a href="javascript:show_login();">登录</a></p>
+					<p><a href="javascript:show_register();">注册</a></p>
+					<p><a href="javascript:show_findpassword();">忘记密码？</a></p>
+				</div>
+				<div class="info h">
+				</div>
+			</div>
+			<div>
+				<!--
+				<form id="searchequips">
+				<span>装备：</span><input class="ti" id="input_searchequip" name="kw" style="width:90px; margin:0px 5px" placeholder="输入搜索装备" /><button type="submit" class="button small rosy">搜索</button>
+				</form>
+				-->
+				<form id="searchthreads" style="margin-top:5px;">
+				<span>模型：</span><input class="ti" id="input_searchmod" name="kw" style="width:90px; margin:0px 5px" placeholder="输入搜索模型" /><button type="submit" class="button small rosy">搜索</button>
+				</form>
+			</div>
+			<div class="common">
+				<!--
+				<ul class="adpics">
+				<li><img src="images/ads/func1.gif" onclick="site_click('http://bbs.exrpg.com/thread-106950-1-1.html')"></li>
+				<li><img src="images/ads/func5.gif" onclick="site_click('http://bbs.exrpg.com/thread-109839-1-1.html')"></li>
+				<li><img src="images/ads/func3.gif" onclick="site_click('http://bbs.exrpg.com/thread-106952-1-1.html')"></li>
+				<li><img src="images/ads/func4.gif" onclick="site_click('http://bbs.exrpg.com/thread-106953-1-1.html')"></li>
+				</ul>
+				-->
+				<div id="adpics_control" style="border-top:#999 1px dashed;height:5px;" onclick="$('.adpics').slideToggle(1000)"></div>
+			</div>
+			<div class="hot boxauto h">
+				<p>最新作品：</p>
+				<ul id="dnfhotthreads" class="hotthreads">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+	<div id="menu_imglist_item" class="contextmenu">
+		<p menu="swap" acckey="W" style="background-image:url('images/menu_icon_swap.png')"></p>
+		<p menu="swap_cancel">互换：重新选择</p>
+		<hr />
+		<p menu="relink" acckey="L" style="background-image:url('images/menu_icon_relink.png')"></p>
+		<p menu="relink_cancel">重定向：重新选择</p>
+		<hr />
+		<p menu="merge_addthis" acckey="V" style="background-image:url('images/menu_icon_add.png')"></p>
+		<p menu="merge_addother" acckey="B" style="background-image:url('images/menu_icon_add.png')">拼合：加入外部文件到拼合队列(B)...</p>
+		<p menu="merge" style="background-image:url('images/menu_icon_merge.png')"></p>
+		<hr />
+		<p menu="allchecked" acckey="C">全部勾选(C)</p>
+		<p menu="allunchecked" acckey="X">全部取消勾选(X)</p>
+		<hr />
+		<p menu="saveas" acckey="S" style="background-image:url('images/menu_icon_save.png')">文件另存为(S)...</p>
+		<p menu="saveall" acckey="A">保存所有文件(A)</p>
+		<p menu="rename" acckey="N" style="background-image:url('images/menu_icon_rename.png')">重命名(N)...</p>
+		<p menu="password" acckey="P" style="background-image:url('images/menu_icon_lock.png')">密码保护文件(P)...</p>
+		<p menu="hide" acckey="H">隐藏已勾选文件内的所有贴图(H)...</p>
+		<hr />
+		<p menu="replace" acckey="R" style="background-image:url('images/menu_icon_replace.png')">替换文件(R)...</p>
+		<!-- <p menu="replace_foreign" acckey="F">替换为外服文件(F)...</p> -->
+		<hr />
+		<p menu="add" style="background-image:url('images/menu_icon_add.png')">增加一个新IMG文件...</p>
+		<p menu="remove" style="background-image:url('images/menu_icon_remove.png')">删除勾选文件...</p>
+	</div>
+	
+	<div id="menu_imglist_space" class="contextmenu">
+		<p menu="refresh" style="background-image:url('images/menu_icon_refresh.png')">刷新列表</p>
+		<p menu="add" style="background-image:url('images/menu_icon_add.png')">增加一个新IMG文件...</p>
+	</div>
+	
+	<div id="menu_imgnodelist_item" class="contextmenu">
+		<p menu="save" style="background-image:url('images/menu_icon_picture_save.png')">提取贴图</p>
+		<p menu="saveall">保存所有贴图</p>
+		<p menu="makegif" style="background-image:url('images/menu_icon_gif.png')">勾选贴图输出GIF</p>
+		<hr />
+		<p menu="replace" style="background-image:url('images/menu_icon_replace.png')">替换贴图...</p>
+		<p menu="hide">隐藏勾选贴图...</p>
+		<!-- <p menu="modifyimage" class="h">扩展图像算法...(Beta)</p> -->
+		<p menu="relink" style="background-image:url('images/menu_icon_picture_link.png')">修改为链接贴图...</p>
+		<!-- <p menu="relink_batch" style="background-image:url('images/menu_icon_picture_link.png')">批量修改为链接贴图(Beta)...</p> -->
+		<p menu="coords" style="background-image:url('images/menu_icon_coords.png')">修改贴图坐标...</p>
+		<hr />
+		<p menu="allchecked">全部勾选</p>
+		<p menu="allunchecked">全部取消勾选</p>
+		<hr />
+		<p menu="add" style="background-image:url('images/menu_icon_add.png')">增加新贴图...</p>
+		<p menu="remove" style="background-image:url('images/menu_icon_remove.png')">删除勾选贴图...</p>
+	</div>
+	
+	<div id="menu_imgnodelist_space" class="contextmenu">
+		<p menu="add" style="background-image:url('images/menu_icon_add.png')">增加新贴图...</p>
+		<p menu="remove" style="background-image:url('images/menu_icon_remove.png')">删除勾选贴图...</p>
+	</div>
+	
+	<div id="dialog-inputcontent" class="dialog h">
+		<p class="dialog-note"></p>
+		<p>
+		<input id="input_content" class="ti" />
+		</p>
+	</div>
+	
+	<div id="dialog-inputcontent-multiline" class="dialog h">
+		<p class="dialog-note"></p>
+		<p>
+			<textarea id="input_content_multiline" wrap="off" class="ti" width="100%" height="100%"></textarea>
+		</p>
+	</div>
+	
+	<div id="dialog-password" class="dialog h">
+		<h1>可以设置文件的保护密码，被保护的文件不允许内部修改编辑和查看操作。</h1>
+		<h1>请不要过分依赖密码保护，即使设置密码也并不能保证绝对安全。</h1>
+		<h2>注意：使用本功能成功设置密码后将扣费 $20 铜板（删除密码不收费）</h2>
+		<h2>我们不鼓励您使用此功能，除非您有特别需要</h2>
+		<p style="margin-top:5px;">需要保护的文件：</p>
+		<p><span class="curFullpath"></span><input id="input_password_imgtarget" type="hidden" /></p>
+		<h1>1，旧密码（如果第一次设置密码，此处请留空，只需填写新密码）</h1>
+		<p><input id="input_password_old" class="ti" placeholder="第一次设置密码保留为空" /></p>
+		<h1>2，新密码</h1>
+		<p><input id="input_password_new" class="ti" placeholder="删除密码保留为空" /></p>
+	</div>
+	
+	<div id="dialog-setting" class="dialog h">
+		<h1>1，输出目录</h1>
+		<p><input id="input_setting_outpath" class="ti" placeholder="提取到的资源均会保存到此目录下" /><button id="btn_setting_outpath" class="button small green">设置目录</button></p>
+		<h1>2，登录选项</h1>
+		<p class="checkbox" option="rememberaccount">记住登录账号</p>
+		<p class="checkbox" option="autologin">半个月内自动登录</p>
+		<h1>3，文件关联</h1>
+		<span><button id="btn_fileAssociation_npk" class="button medium green">关联 NPK 文件类型</button><button id="btn_fileAssociation_img" class="button medium green">关联 IMG 文件类型</button></span>
+		<h1>4，GIF输出选项</h1>
+		<p><span>GIF延迟（毫秒）：</span><input id="input_setting_gifdelay" class="ti number_only" placeholder="每帧GIF延迟" /></p>
+		<p><span>GIF背景色：</span><input id="input_setting_gifbackcolor" class="ti" placeholder="GIF背景色" /></p>
+		<p><p class="checkbox" option="giftransparent">GIF背景透明</p></p>
+	</div>
+	
+	<div id="dialog-login" class="dialog h">
+		<form id="form_login">
+		<h1>账号</h1>
+		<p><input id="input_login_username" class="ti" placeholder="输入 Email 或 用户名登录" style="width:200px" /></p>
+		<h1>密码</h1>
+		<p><input id="input_login_password" class="ti" placeholder="输入密码" style="width:200px" type="password" /></p>
+		<h1>安全提问：</h1>
+		<select id="select_login_question" style="width:210px" onchange="if($(this).val() &gt; 0){$('#input_login_answer').removeAttr('disabled');}else{$('#input_login_answer').attr('disabled','disabled').val('');}" >
+			<option value="0">无安全提问</option>
+			<option value="1">母亲的名字</option>
+			<option value="2">爷爷的名字</option>
+			<option value="3">父亲出生的城市</option>
+			<option value="4">您其中一位老师的名字</option>
+			<option value="5">您个人计算机的型号</option>
+			<option value="6">您最喜欢的餐馆名称</option>
+			<option value="7">驾驶执照的最后四位数字</option>
+		</select>
+		
+		<p><h1>答案：</h1><input id="input_login_answer" class="ti" placeholder="输入问题答案" style="width:200px" /></p>
+		<br />
+		<p class="checkbox" option="rememberaccount">记住登录账号</p>
+		<p class="checkbox" option="autologin">半个月内自动登录</p>
+		</form>
+	</div>
+	
+	<div id="dialog-easymoder" class="dialog h">
+		<h1>可以利用纸娃娃代码来一键换装，代码仅仅支持EXRPG纸娃娃系统。</h1>
+		<h1>此功能完善中并不能一定保证预期效果，比如目前发光图层只能做出模拟效果</h1>
+		<h2>注意：纸娃娃所在服数据库必须与游戏目录所在服相同，并确保未使用过任何第三方补丁（如果使用过请返回主界面执行清理非官方NPK）。使用本功能制作一次扣费 $15 铜板</h2>
+		<h2>警告：如果你不是第一次使用本功能，请使用你原本的纸娃娃代码，而不是当初变装后的纸娃娃代码。</h2>
+		<h2>恢复方法：返回主界面执行清理非官方NPK。</h2>
+		<h1>1，清理非官方NPK（确保时装不冲突）</h1>
+		<p class="checkbox" option="easymoder_clearnpk"><b>我已返回主界面执行过了清理非官方NPK、并重新运行游戏一次恢复重置了所有文件，保证此刻游戏目录内不含有其他第三方NPK（点击我勾选表示同意）</b></p>
+		<h1>2，选择游戏 ImagePacks2 目录</h1>
+		<p><input id="input_easymoder_path" class="ti" /><button id="btn_easymoder_path" class="button small green">定位目录</button></p>
+		<h1>3，原始角色的纸娃娃代码 <a href="#" onclick="site_click('http://bbs.exrpg.com/thread-109831-1-1.html')">什么是纸娃娃代码？</a></h1>
+		<p><input id="input_easymoder_code1" class="ti" /></p>
+		<h1>4，想要更换形象的纸娃娃代码</h1>
+		<p><input id="input_easymoder_code2" class="ti" placeholder="支持跨服纸娃娃代码！但不能跨职业，比如男鬼剑变女鬼剑" /></p>
+		<h1>5，条约及免责声明 <a href="#" onclick="site_click('http://bbs.exrpg.com/thread-109829-1-1.html')">查看本功能免责声明</a></h1>
+		<p class="checkbox" option="easymoder_readtip"><b>我已阅读了上面红字提示，并同意本功能免责声明。（点击我勾选表示同意）</b></p>
+		<p class="checkbox" option="easymoder_localres"><b>使用原版IMG资源（将使用官方原版资源文件避免本地的修改导致与预期作品不符）</b></p>
+	</div>
+
+	<div id="dialog-clearnpk" class="dialog h">
+		<h1>1，选择游戏的 ImagePacks2 目录下的任意一个 NPK 文件来确定游戏路径</h1>
+		<p><input id="input_clearnpk_path" class="ti" /><button id="btn_clearnpk_path" class="button small green">定位文件</button></p>
+		<h1>2，清理选项</h1>	
+		<p class="checkbox" option="onlysize">仅仅比较文件大小来做判断，不进行二进制校验（速度变快但有可能不准确）</p>
+		<p class="checkbox" option="confirm">删除文件前再次确认</p>
+		<h1>3，清理目标</h1>
+		<div style="padding-top:5px;">
+			<button ref="(ImagePacks|SoundPacks).*" class="clearnpk button small red">清理全部文件</button>
+			<button ref="ImagePacks2\\sprite_character_[^_]+_(at)?equipment_(avatar|growtype).*" class="clearnpk button small blue">全部时装</button>
+			<button ref="ImagePacks2\\sprite_character_[^_]+_effect.*" class="clearnpk button small blue">全部技能</button>
+			<button ref="ImagePacks2\\sprite_character_[^_]+_(at)?equipment_weapon.*" class="clearnpk button small blue">全部武器</button>
+		</div>
+		<div style="padding-top:5px;">
+			<button ref="ImagePacks2\\sprite_interface.*" class="clearnpk button small blue">清理界面</button>
+			<button ref="ImagePacks2\\sprite_creature.*" class="clearnpk button small blue">清理宠物</button>
+			<button ref="ImagePacks2\\sprite_(map|worldmap).*" class="clearnpk button small blue">清理地图</button>
+			<button ref="ImagePacks2\\sprite_monster.*" class="clearnpk button small blue">清理怪物</button>
+			<button ref="ImagePacks2\\sprite_(?!character|interface|creature|map|worldmap|monster).*" class="clearnpk button small blue">清理其他</button>
+		</div>
+	
+		<div style="padding-top:5px;">
+			<h2>清理职业特性文件</h2>
+			<select id="clearnpk_target" style="margin-top:5px">
+				<option value="swordman">鬼剑士：男(Swordman)</option>
+				<option value="atswordman">鬼剑士：女(AtSwordman)</option>
+				<option value="demonicswordman">黑暗武士(DemonicSwordman)</option>
+				<option value="demoniclancer">魔枪师(DemonicLancer)</option>
+				<option value="gunner">神枪手：男(Gunner)</option>
+				<option value="atgunner">神枪手：女(AtGunner)</option>
+				<option value="fighter">格斗家：女(Fighter)</option>
+				<option value="atfighter">格斗家：男(AtFighter)</option>
+				<option value="mage">魔法师：女(Mage) / 缔造者(CreatorMage)</option>
+				<option value="atmage">魔法师：男(AtMage)</option>
+				<option value="priest">圣职者：男(Priest)</option>
+				<option value="atpriest">圣职者：女(AtPriest)</option>
+				<option value="thief">盗贼/暗夜使者(Thief)</option>
+				<option value="knight">骑士(Knight)</option>
+			</select>
+			<button ref="0" class="clearnpk2 button small blue">清理时装</button>
+			<button ref="1" class="clearnpk2 button small blue">清理技能</button>
+			<button ref="2" class="clearnpk2 button small blue">清理武器</button>
+		</div>
+	</div>
+	<!-- 
+	<div id="dialog-searchimg" class="dialog h">
+		<h1>1，选择NPK目录</h1>
+		<p><input id="input_searchimg_folder" class="ti" /><button id="btn_searchimg_path" class="button small green">定位目录</button></p>
+		<h1>2，搜索IMG路径</h1>
+		<input id="input_searchimg_imgpath" class="ti" />
+	</div>
+	<div id="dialog-searchimg-result" class="dialog h">
+		<h1>1，检索结果</h1>
+		<h1>鼠标双击打开文件</h1>
+		<p><div id="list-searchimg" class="listview"></div></p>
+		<h1>2，操作</h1>
+		<button ref="0" class="button small blue">复制列表</button>
+	</div>
+	-->
+
+	<div id="dialog-mergeimg" class="dialog h">	
+		<h1>1，拼合队列</h1>
+		<h1>鼠标拖动调整拼合顺序，顺序从上至下依次拼合（最上面是最顶层，最下面是最底层）</h1>
+		<!-- <p style="margin:5px 0px">如果属于服装武器类文件（自定义IMG文件名不认），可<cashfont>消费 $1 x 文件数 铜板</cashfont>来由服务器帮你 <button id="btn_mergeimg_autosort" class="button small rosy">自动排序</button></p> -->
+		<!-- <p style="margin:5px 0px">如果存在跨包文件的拼合（队列的IMG在另一个NPK内），需要额外<cashfont>花费 $1 x 文件数 铜板</cashfont></p> -->
+		<p><div id="list-mergeimg" class="listview" style="background:#FFF url(images/tips/merge_list_bg.gif) no-repeat 230px 30px;"></div></p>
+		<p><div id="list-mergeimg-trash" style="margin:5px 0px;width:675px;height:45px;background:#005DC3 url(images/tips/merge_trash.gif) no-repeat 0px 0px;"></div></p>
+		<p>* 点击垃圾桶可以清空拼合队列</p>
+		<h1>2，替换目标（在当前打开的NPK文件内的）</h1>
+		<p><input id="input_mergeimg_imgpath" class="ti" readonly="readonly" disabled="disabled" /></p>
+		<!-- 
+		<h1>3，拼合选项</h1>	
+		<div class="checkboxs checkbox-mergeimg">
+			<p ref='H'>隐藏合并列表内的文件（只支持NPK格式下的IMG文件，否则忽略隐藏）</p>
+			<p ref='F'>并且填充满文件保持其大小不变（此选项只在勾选上个选项的情况下才会生效）</p>
+		</div>
+		-->
+		<p class='tip-warning' >最终拼合生成的为V2版本的IMG，暂时无法支持调色板特性，色位取决于替换目标的色位格式</p>
+	</div>
+	
+	<div id="dialog-mergeaddother" class="dialog h">
+		<p>支持NPK、SPK、IMG文件</p>
+		<p>当选择NPK、SPK此类包文件时，此类文件可能含有不止一个IMG文件，其每个路径后必须 <b>增加“|IMG子路径”</b> 才能拼合或自动排序有效，否则会出错。指定多个文件用 <b>英文半角逗号(,)</b> 分隔。</p>
+		<h1>外部拼合文件 <a href="javascript:;" id="a_mergeaddother_localpath">[点击我选择文件]</a></h1>
+		<p><input id="input_mergeaddother_path" class="ti" />
+		</p>	
+	</div>
+	
+	<div id="dialog-newimg" class="dialog h">
+		<p class="dialog-note"></p>
+		<p>[必填参数] 文件全路径：</p>
+		<p><input id="input_newimg_path" class="ti" /></p>
+		<p>[必填参数] 文件版本：</p>
+		<p>
+		<select id="select_newimg_version" style="margin-top:5px">
+			<option value="1">V1</option>
+			<option value="2" selected>V2</option>
+			<option value="4">V4</option>
+			<option value="5">V5</option>
+			<option value="6">V6</option>
+		</select>
+		</p>	
+		<p>[可选参数] 包含图像数量：</p>
+		<p><input id="input_newimg_nodecount" class="ti number_only" /></p>
+		<p>[可选参数] 位置：(填入非负数代表现有文件正数第 n 个之后插入，负数代表倒数)</p>
+		<p><input id="input_newimg_position" class="ti number_only" /></p>
+	</div>
+	
+	<div id="dialog-replaceimage" class="dialog h">
+		<h1>1，修改哪些资源？</h1>
+		<div id="radios_replaceimage_nodes" class="radios">
+			<p ref='1'>修改当前选定资源 [ <span class="curIndex"></span> 号资源 ]</p>
+			<p ref='2'>修改本IMG内的所有资源</p>
+			<p ref='3'>修改本IMG内的勾选资源</p>
+		</div>
+		<h1>2，资源位置？[点击文本框选择文件或路径]</h1>
+		<p><input id="input_replaceimage_respath" class="ti" /></p>
+		<h1>3，保存色位？</h1>
+		<p id="tip_replaceimage_colors" class='tip-warning' >V4，V6版本文件（即如果带调色板）请保存为32位色，否则不会生效，同时，修改的贴图的调色板特性也会失去。当前版本软件暂不支持8位色存储。</p>
+		<div class="radios radio-colors">
+			<p ref='0'>原始色位 - DXTn 格式将存储为 A1R5G5B5 或 A4R4G4B4<span class="curColor"></span></p>
+			<p ref='161'>A1R5G5B5[16位色] - 高彩，只支持透明和不透明，不支持半透明</p>
+			<p ref='162'>A4R4G4B4[16位色] - 高彩，支持半透明，但颜色失真最大</p>
+			<p ref='32' >A8R8G8B8[32位色] - 真彩色，支持全透明阶度和全彩色，但占用空间最大</p>
+		</div>
+		<h1>4，替换选项</h1>	
+		<div class="checkboxs checkbox-replaceimage">
+			<p ref='F'>修复坐标值以适应新图片（若不选原始坐标值将不作任何修改）</p>
+		</div>
+	</div>
+	
+	<div id="dialog-relinkimage" class="dialog h">
+		<h1>1，修改哪些资源？</h1>
+		<div id="radios_relinkimage_nodes" class="radios">
+			<p ref='1'>修改当前选定资源 [ <span class="curIndex"></span> 号资源 ]</p>
+			<p ref='2'>修改本IMG内的所有资源（不包含被指向索引的贴图）</p>
+			<p ref='3'>修改本IMG内的勾选资源</p>
+		</div>
+		<h1>2，指向索引？</h1>
+		<h2>注意：指向的索引贴图不能为仍然是链接引用型的。</h2>
+		<p><input id="input_relinkimage_linkto" class="ti number_only" /></p>
+	</div>
+	
+	<div id="dialog-modcoords" class="dialog h">
+		<h1>1，修改哪些资源？</h1>
+		<div id="radios_modcoords_nodes" class="radios">
+			<p ref='1'>修改当前选定资源 [ <span class="curIndex"></span> 号资源 ]</p>
+			<p ref='2'>修改本IMG内的所有资源</p>
+			<p ref='3'>修改本IMG内的勾选资源</p>
+		</div>
+		<h1>2，修改选项 [打钩表示修改此项，否则忽略]</h1>
+		<div class="checkboxs checkbox-coords">
+			<p>X：</p><input id="input_modcoords_x" class="ti number_only" />
+			<p>Y：</p><input id="input_modcoords_y" class="ti number_only" />
+			<p>帧域矩形宽：</p><input id="input_modcoords_w" class="ti number_only" />
+			<p>帧域矩形高：</p><input id="input_modcoords_h" class="ti number_only" />
+			<p id="checkbox_modcoords_r">* 我修改的是相对坐标 [在原有坐标值上增加所填坐标值，填负数表示减]</p>
+		</div>
+	</div>
+	
+	<div id="dialog-modifyimage" class="dialog h">
+		<h1>1，修改哪些资源？</h1>
+		<div id="radios_modifyimage_nodes" class="radios">
+			<p ref='1'>修改当前选定资源 [ <span class="curIndex"></span> 号资源 ]</p>
+			<p ref='2'>修改本IMG内的所有资源</p>
+			<p ref='3'>修改本IMG内的勾选资源</p>
+		</div>
+		<h1>2，修改算法</h1>	
+		<div id="radios_modifyimage_mode" class="radios">
+			<p ref='1'>扩展坐标至图像</p>
+			<p ref='2'>图像边缘透明剪裁 / 收缩坐标从图像</p>
+			<p ref='3'>模拟线性减淡处理</p>
+			<p ref='4'>模拟染色处理</p>
+		</div>
+		<h1>3，修改选项</h1>
+		<div class="checkboxs checkbox-modifyimage">
+			<p ref='F'>修正坐标值</p>
+			<p ref='C'>扩展区域颜色填充 [不选默认透明色填充]</p>
+		</div>
+	</div>
+
+	<div id="dialog-modpalette" class="dialog h">
+		<h1>正在修改 <select id="modpalette_select_palette_index" style="margin-bottom:2px"></select></h1>
+		<div id="modpalette_paletteview" class="paletteview"></div>
+		<div id="modpalette_imageview" class=""></div>
+	</div>
+
+	<div id="dialog-newimgnode" class="dialog h">
+		<p class="dialog-note"></p>
+		<p>[必填参数] 增加的贴图数量：</p>
+		<p><input id="input_newimgnode_count" class="ti number_only" /></p>
+		<p>[可选参数] 位置：(填入非负数代表现有贴图正数第 n 个之后插入，负数代表倒数)</p>
+		<p><input id="input_newimgnode_position" class="ti number_only" /></p>
+	</div>
+	
+	<div id="dialog-foreignimg" class="dialog h">
+		<h2>注意：使用本功能成功替换后将扣费铜板，不成功不扣</h2>
+		<h1>请确认路径的合法有效性，否则服务器找不到您自定义的文件路径资源。</h1>
+		<h1>要下载的新文件资源路径：</h1>
+		<p><input id="input_foreignimg_imgpath" class="ti" /></p>
+		<p style="margin-top:5px;">将要替换到本 NPK 内的文件：</p>
+		<p><span class="curFullpath"></span><input id="input_foreignimg_replacepath" type="hidden" /></p>
+		<h1>需要哪个区服的资源？</h1>
+
+		<button class="button white taskbtn" ref="exrpg">获取 EXRPG IMG资源服务器资源[EXRPG]<br /><span style="color:red">推荐！[ $3 个铜板，资源全，快，下载迅速]</span></button>
+		<button class="button white taskbtn" ref="kortest">获取韩体验服资源[KORTEST] - <span style="color:red">[ $2 个铜板]</span></button>
+		<button class="button white taskbtn" ref="kor">获取韩服资源[KOR] - <span style="color:red">[ $1 个铜板]</span></button>
+		<button class="button white taskbtn" ref="jpn">获取日服资源[JPN] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="chn">获取中服资源[CHN] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="tw">获取台服资源[TW] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="usa">获取美服资源[USA] - <span style="color:green">[FREE]</span></button>
+	</div>
+	<!-- 
+	<div id="dialog-downloadpackage" class="dialog h">
+		<h2>注意：使用本功能成功获取文件后将扣费铜板，不成功不扣</h2>
+		<h1>要下载的新文件资源路径：</h1>
+		<p><input id="input_downloadpackage_npkpath" class="ti" /></p>
+		<h1>需要哪个区服的资源？</h1>
+		<button class="button white taskbtn" ref="kortest">获取韩体验服资源[KORTEST] - <span style="color:red">[ 单个文件 $1 个铜板，按数量消费 ]</span></button>
+		<button class="button white taskbtn" ref="kor">获取韩服资源[KOR] - <span style="color:red">[ 单个文件 $1 个铜板，按数量消费 ]</span></button>
+		<button class="button white taskbtn" ref="jpn">获取日服资源[JPN] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="chn">获取中服资源[CHN] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="tw">获取台服资源[TW] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="usa">获取美服资源[USA] - <span style="color:green">[FREE]</span></button>
+	</div>
+	-->
+
+	<div id="dialog-progress" class="dialog h">
+		<p class="progress-note"></p>
+		<p class="progressbar"></p>
+	</div>
+
+	<div id="dialog-nocopper" class="dialog h">
+		<h1 id="txt_nocopper_tip" ></h1>
+		<div style="width:425px;height:255px;background:url(images/tips/nocopper.png) no-repeat 0px 0px;"></div>
+		<span><button id="btn_nocopper_task" class="button green">任务通道</button></span>
+		<span><button id="btn_nocopper_exchange" class="button green">兑换通道</button></span>
+		<span><button id="btn_nocopper_act" class="button green">活动通道</button></span>
+		<span><button id="btn_nocopper_donation" class="button green">捐助通道</button></span>
+	</div>
+	<!-- 
+	<div id="dialog-freeauthority" class="dialog h">
+		<h1>为了回馈感谢常关注 EXRPG 的会员们，您有机会可以继续免权零铜板使用。</h1>
+		<h1>以下内容为您的账号在 EXRPG 的活跃统计（统计截止日期为2017年6月1日）</h1>
+		<br />
+		<table>
+			<thead>
+				<th>统计条目</th>
+				<th>目标达成</th>
+				</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>2010年6月至今DNF区有效主题帖</td>
+				<td><span id="freeauthority_c1">?</span> 次 * 0.3天</td>
+			</tr>
+			<tr>
+				<td>2010年6月至今DNF区有效回帖</td>
+				<td><span id="freeauthority_c2">?</span> 次 * 0.1天</td>
+			</tr>
+			<tr>
+				<td>2010年6月至今评分帖子</td>
+				<td><span id="freeauthority_c3">?</span> 次 * 0.1天</td>
+			</tr>
+			<tr>
+				<td>被收听人数</td>
+				<td><span id="freeauthority_c4">?</span> 人 * 2天</td>
+			</tr>
+			<tr>
+				<td>2012年2月至5月签到天数</td>
+				<td><span id="freeauthority_c5">?</span> 次 * 0.2天</td>
+			</tr>
+			<tr>
+				<td>模型区精华贴数</td>
+				<td><span id="freeauthority_c6">?</span> * 4天</td>
+			</tr>
+			<tr>
+				<td>2010年至今在模型解答区最终答案被选中次数</td>
+				<td><span id="freeauthority_c7">?</span> * 1天</td>
+			</tr>
+			<tr>
+				<td>捐助论坛建设</td>
+				<td><span id="freeauthority_c8">?</span> * 2天</td>
+			</tr>
+			<tr>
+				<td>附加奖励</td>
+				<td><span id="freeauthority_bonus">?</span> 天</td>
+			</tr>
+			</tbody>
+		</table>
+		<br />
+		<h1>总合计</h1>
+		<p>合计免权期天数：<span id="freeauthority_days">?</span> 天</p>
+		<p>免权期失效于：<span id="freeauthority_deadline">?</span></p>
+		<br />
+		<span><button id="btn_freeauthority_yes" class="button green">查看我的免权期天数并领取</button></span>
+		<span><button id="btn_freeauthority_no" class="button green">不使用</button></span>
+	</div>
+	-->
+</body>
+<script src="app.js" type="text/javascript"></script>
+</html>
