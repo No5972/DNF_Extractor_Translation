@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>DNF Extractor</title>
+<script src="jquery.min.js" type="text/javascript"></script>
+<script src="jquery-ui.min.js" type="text/javascript"></script>
+<script src="jquery.exrpg.contextmenu.js" type="text/javascript"></script>
+<script src="jquery.wtooltip.min.js" type="text/javascript"></script>
+<script src="jquery.miniColors.js" type="text/javascript"></script>
+<script src="jquery.mousewheel.min.js" type="text/javascript"></script>
+<script src="utility.js" type="text/javascript"></script>
+<link href="jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="jquery-miniColors.css" rel="stylesheet" type="text/css"/>
+<link href="button.css" rel="stylesheet" type="text/css"/>
+
+<style type="text/css">
+*{
+	margin:0;
+	padding:0;
+	border:0;
+	cursor:default;
+}
+
+/* scrollbar started */
+::-webkit-scrollbar {
+    width: 14px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+	border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background: rgba(64,183,234,0.8); 
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(64,183,234,0.4); 
+}
+
+a,
+a:link,
+a:visited,
+a:active {
+	color: #756A4F;
+	text-decoration: none;
+	cursor:pointer;
+}
+a:hover {
+	color: #756A4F;
+	background-color: #ffe8af;
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+input,textarea {
+	resize: none;
+	cursor:text;
+	-webkit-border-radius:3px;
+}
+select {
+	border-color:#707070 #CECECE #CECECE #707070;
+	border-style:solid;
+	border-width:1px;
+	-webkit-border-radius:2px;
+	-webkit-appearance:none;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAJCAYAAAAGuM1UAAAAH0lEQVR42mNgoDnQ13f7TwiTpIkkm0hyHkl+YhhQAABcfyjsqSyTLgAAAABJRU5ErkJggg==") no-repeat scroll right center transparent;
+	padding-right: 14px;
+}
+
+ul,ol{list-style:none;}
+button,input,select,textarea{font-size:100%;}
+
+.h {display:none}
+
+.ti {
+	background:#FFF;
+	border-color:#707070 #CECECE #CECECE #707070;
+	border-style:solid;
+	border-width:1px;
+	color:#666666;
+	font-size:13px;
+	padding:2px 4px;
+	vertical-align:middle;
+	line-height:16px;
+}
+.toolTip {
+	border: #ffaed9 1px solid;
+	background-color:#ffe8f2;
+	padding: 5px;
+	font-size:14px;
+	color:#333;
+	text-align:left;
+}
+
+.dialog .taskbtn{
+	margin:5px 0px;
+	width: 100%;
+	text-align: left;
+}
+
+.dialog h1{
+	color:#383838;
+	font-size:13px;
+	margin-top:5px;
+	text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
+.dialog h2{
+	color:#c51b21;
+	font-size:13px;
+	margin-top:5px;
+	text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
+cashfont {
+	color:#c51b21;
+	font-weight:bold;
+	margin:0px 5px;
+}
+
+.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
+
+
+
+html{
+	font:12px/1.5 tahoma,arial,"微软雅黑",sans-serif;
+	height:100%;
+	box-sizing: border-box;
+	-webkit-user-select:none;
+	overflow:hidden;
+}
+
+body{
+	height:100%;
+	box-sizing: border-box;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	text-shadow: 0 1px 1px rgba(0,0,0,.2);
+}
+
+.boxh {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+}
+.boxv {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+}
+.boxauto {
+	-webkit-box-flex: 1;
+}
+.content {
+
+}
+.app_title {
+	background: url(images/title_bg.gif) repeat-x 0px 0px;
+}
+.app_title .logo {
+	background: url(images/title.gif) no-repeat;
+	height:43px;
+}
+
+.sheet {
+	border-top:#d3d3d3 1px solid;
+}
+.appui {
+	margin:8px;
+}
+
+.radios p {
+	margin:1px;
+	padding:1px;
+	padding-left:25px;
+	background:transparent url(images/checkbox_normal.png) no-repeat 2px 3px;
+	cursor:hand;
+}
+.radios p.checked {
+	background:transparent url(images/checkbox_checked.png) no-repeat 2px 3px;
+}
+.checkboxs p {
+	margin:1px;
+	padding:1px;
+	padding-left:25px;
+	background:transparent url("data:image/gif;base64,R0lGODlhDgANAPcAAPn8/mOrx7O1vfP5/fj4+Pb29vf39/T09PPz8/r9/v7+/mWvy8jK0M7P1dXq87a4wIXB2HO2z2Osx3CzzJPI3GSuyXC20I7F2ri6wbW3v8nL0be5wbS2vpHH283O1GSuyrq8xL2/xru9xGawzPX6/b2/x7i6wmmzzuTk5pvM3+rr7dPU2dzc38LZ4jKXynW50mWwy8vN0/Dx8sDCycrk7onD2eLx+PH1+Or0+j+ezj2eztfp80Ceze/2+WGu1WSw1ajT6DKXyU2l0jKVx16u1sLe7Mjf6JXH4NTp9D2dzHG11s/m8ubw9UOgzVKn0e3z9p/P58rj78zh6TOYyjSXyenx9dvt9j6dzFus1fT3+PHx8fLy8v39/fv7+/n5+fr6+vL5/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAOAA0AAAiNAMPIWKEhhocGDTzE0LBCRpgwDFB4+fKlSxeKXlAweDjDi4KHIMMo8DLjYYkvIUN+KfEQhJeUIL2AeGjiJcwwXkw8xGCAi8+fPg1geLihgMWjRwtsePjgAMWnTw88eJgBAQEvWLMSQJDhYQgWWrZs0RJ2LIsQD1WI4CCgrVsOIlQ8TEACjN27dkkkCBMQADs=") no-repeat 2px 3px;
+	cursor:hand;
+}
+.checkboxs p.checked {
+	background:transparent url("data:image/gif;base64,R0lGODlhDgANAPcAAPn8/mOrx7O1vfP5/fj4+Pb29vf39/T09PPz8/r9/v7+/mWvy8jK0M7P1dXq87a4wIXB2HO2z2Osx3CzzJPI3GSuyXC20I7F2ri6wbW3v8nL0be5wbS2vpHH283O1GSuyrq8xL2/xru9xGawzPX6/b2/x7i6wmmzzuTk5pvM3+rr7dPU2dzc38LZ4jKXynW50mWwy8vN0/Dx8sDCycrk7onD2eLx+PH1+Or0+j+ezj2eztfp80Ceze/2+WGu1WSw1ajT6DKXyU2l0jKVx16u1sLe7Mjf6JXH4NTp9D2dzHG11s/m8ubw9UOgzVKn0e3z9p/P58rj78zh6TOYyjSXyenx9dvt9j6dzFus1fT3+PHx8fLy8v39/fv7+/n5+fr6+vL5/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAOAA0AAAiuAAE4SFHjQgcKFDpcqJHCAYABEKR4+fKlSxeKTIxAGADmhRcFYUKGtCLEywswYCx8ERnSRo4kXyygPOGFZQIiU4JUOYFyRE0cSMJAcdFkiZcRKGEYAKIDS48rPHZwMQAD5YICUZy4+EGliMUCC1B+OPDlho8hRyh+OfABZQUEBLw8UZLFixcCCCqAGRChhZYtW7T8DdwiwgAANCZICMC4sYQJNACEeYiycuXDYQICADs=") no-repeat 2px 3px;
+}
+
+.checkbox {
+	margin:1px;
+	padding:1px;
+	padding-left:25px;
+	background:transparent url("data:image/gif;base64,R0lGODlhDgANAPcAAPn8/mOrx7O1vfP5/fj4+Pb29vf39/T09PPz8/r9/v7+/mWvy8jK0M7P1dXq87a4wIXB2HO2z2Osx3CzzJPI3GSuyXC20I7F2ri6wbW3v8nL0be5wbS2vpHH283O1GSuyrq8xL2/xru9xGawzPX6/b2/x7i6wmmzzuTk5pvM3+rr7dPU2dzc38LZ4jKXynW50mWwy8vN0/Dx8sDCycrk7onD2eLx+PH1+Or0+j+ezj2eztfp80Ceze/2+WGu1WSw1ajT6DKXyU2l0jKVx16u1sLe7Mjf6JXH4NTp9D2dzHG11s/m8ubw9UOgzVKn0e3z9p/P58rj78zh6TOYyjSXyenx9dvt9j6dzFus1fT3+PHx8fLy8v39/fv7+/n5+fr6+vL5/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAOAA0AAAiNAMPIWKEhhocGDTzE0LBCRpgwDFB4+fKlSxeKXlAweDjDi4KHIMMo8DLjYYkvIUN+KfEQhJeUIL2AeGjiJcwwXkw8xGCAi8+fPg1geLihgMWjRwtsePjgAMWnTw88eJgBAQEvWLMSQJDhYQgWWrZs0RJ2LIsQD1WI4CCgrVsOIlQ8TEACjN27dkkkCBMQADs=") no-repeat 2px 3px;
+	cursor:hand;
+}
+.checkbox.checked {
+	background:transparent url("data:image/gif;base64,R0lGODlhDgANAPcAAPn8/mOrx7O1vfP5/fj4+Pb29vf39/T09PPz8/r9/v7+/mWvy8jK0M7P1dXq87a4wIXB2HO2z2Osx3CzzJPI3GSuyXC20I7F2ri6wbW3v8nL0be5wbS2vpHH283O1GSuyrq8xL2/xru9xGawzPX6/b2/x7i6wmmzzuTk5pvM3+rr7dPU2dzc38LZ4jKXynW50mWwy8vN0/Dx8sDCycrk7onD2eLx+PH1+Or0+j+ezj2eztfp80Ceze/2+WGu1WSw1ajT6DKXyU2l0jKVx16u1sLe7Mjf6JXH4NTp9D2dzHG11s/m8ubw9UOgzVKn0e3z9p/P58rj78zh6TOYyjSXyenx9dvt9j6dzFus1fT3+PHx8fLy8v39/fv7+/n5+fr6+vL5/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAOAA0AAAiuAAE4SFHjQgcKFDpcqJHCAYABEKR4+fKlSxeKTIxAGADmhRcFYUKGtCLEywswYCx8ERnSRo4kXyygPOGFZQIiU4JUOYFyRE0cSMJAcdFkiZcRKGEYAKIDS48rPHZwMQAD5YICUZy4+EGliMUCC1B+OPDlho8hRyh+OfABZQUEBLw8UZLFixcCCCqAGRChhZYtW7T8DdwiwgAANCZICMC4sYQJNACEeYiycuXDYQICADs=") no-repeat 2px 3px;
+}
+
+.paletteview {
+	border:#d3d3d3 1px solid;
+	background:#FFF;
+	overflow-x:hidden;
+	overflow-y:scroll;
+}
+.paletteview div {
+	margin:1px;
+	float:left;
+	height:18px;
+	width: 18px;
+	background:transparent url("data:image/gif;base64,R0lGODlhDAAMAIABAMzMzP///yH5BAEAAAEALAAAAAAMAAwAAAIWhB+ph5ps3IMyQFBvzVRq3zmfGC5QAQA7");
+}
+
+.paletteview div>a {
+	display:block;
+	height:18px;
+	width: 18px;
+	outline:none;
+}
+
+.listview {
+	border:#d3d3d3 1px solid;
+	background:#FFF;
+	overflow-x:hidden;
+	overflow-y:scroll;
+}
+.listview p {
+	margin:1px;
+	padding-left:25px;
+	border:1px solid #FFF;
+	height:20px;
+	line-height: 20px;
+	color: #756A4F;
+	display: block;
+	text-decoration:none;
+	cursor:default;
+	white-space:nowrap;
+	overflow:hidden;
+	outline:none;
+}
+.listview p.lv_icon_ {
+	background:transparent url(images/listview_icon_normal.png) no-repeat 3px 3px;
+}
+
+.listview p.lv_icon_img1 {
+	background:transparent url(images/listview_icon_img1.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_img2 {
+	background:transparent url(images/listview_icon_img2.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_img4 {
+	background:transparent url(images/listview_icon_img4.png) no-repeat 3px 3px;
+	//color: rgb(0, 118, 163);
+}
+.listview p.lv_icon_img5 {
+	background:transparent url(images/listview_icon_img5.png) no-repeat 3px 3px;
+	//color: rgb(0, 118, 163);
+}
+.listview p.lv_icon_img6 {
+	background:transparent url(images/listview_icon_img6.png) no-repeat 3px 3px;
+	//color: rgb(182, 19, 24);
+}
+
+.listview p.lv_icon_wav, .listview p.lv_icon_ogg, .listview p.lv_icon_mp3 {
+	background:transparent url(images/listview_icon_sound.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_image {
+	background:transparent url(images/listview_icon_image.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_link {
+	background:transparent url(images/listview_icon_link.png) no-repeat 3px 3px;
+}
+.listview p.lv_icon_modified {
+	background:transparent url(images/listview_icon_modified.png) no-repeat 3px 3px;
+}
+
+.listview img {
+	height:16px;
+	width: 16px;
+	margin:1px 4px 0px 0px;
+	background:transparent url(images/checkbox_normal.png) no-repeat 2px 3px;
+}
+
+.listview img.checked {
+	background:transparent url(images/checkbox_checked.png) no-repeat 2px 3px;
+}
+
+.listview p:hover {
+	border:1px solid #40b7ea;
+	background-color:#79e8fc;
+}
+.listview p.selected {
+	border:1px solid #ecc242;
+	background-color:#ffdc87;
+}
+.listview.loading {
+	background:transparent url('images/loading43x11.gif') no-repeat 50% 50%;
+}
+
+
+.contextmenu {
+	border:1px solid #d3d3d3;
+	background-color:#f7f7f7;
+	position: absolute;
+	float:right;
+	left: 10px;
+	top: 10px;
+	display:none;
+	-webkit-box-shadow:2px 2px 5px #756B4B;
+}
+
+.contextmenu p {
+	margin:1px;
+	padding-left:25px;
+	padding-right:10px;
+	height:18px;
+	line-height: 18px;
+	border:1px solid #f7f7f7;
+	background:transparent no-repeat 1px 1px;
+	color: #756A4F;
+	display: block;
+	white-space:nowrap;
+}
+.contextmenu hr {
+	margin:1px 3px;
+	border-top:1px dashed;
+	border-color:#d3d3d3;
+}
+
+.contextmenu p.hover {
+	//border-color: #a5cf3d;
+	//background-color:#f2fddb;
+	border-color: #40b7ea;
+	background-color:#79e8fc;
+}
+
+.progress-note {
+	overflow:hidden;
+}
+
+
+.appviews {
+	margin-top:8px;
+}
+
+.appviews .lcolum {
+	width:230px;
+}
+.appviews .lcolum div:nth-child(3){
+	margin-top:8px;
+}
+.filesizebar {
+	padding-left: 20px;
+	margin-bottom:5px;
+}
+div.fsmatch {
+	background:url('images/filesize/match.png') no-repeat 0px 0px;
+}
+div.fssmall {
+	background:url('images/filesize/small.png') no-repeat 0px 0px;
+}
+div.fslarge {
+	background:url('images/filesize/large.png') no-repeat 0px 0px;
+}
+b.fsr {
+	color:red;
+}
+b.fsb {
+	color:blue;
+}
+
+.appviews .rcolum {
+	margin-left:8px;
+}
+
+#node2_list {
+	height:150px;
+}
+
+.misctoolbar>* {
+	margin-right:20px;
+}
+
+.imagebox {
+	border:1px solid #d3d3d3;
+	overflow:hidden;
+}
+
+.imagebox img {
+	cursor:crosshair;
+}
+
+.netui {
+	width:200px;
+	min-width:200px;
+	border-left:#d3d3d3 1px solid;
+	background:#f7f7f7;
+	padding: 0px 10px;
+	overflow:hidden;
+}
+
+.accountui {
+	-webkit-box-align:center;
+	padding-bottom: 10px;
+	border-bottom:#999 1px dashed;
+}
+.accountui .avatarimg {
+	font-size:0;
+}
+img.avatar {
+	padding:2px;
+	background:#fff;
+	border: 1px solid;
+	border-color:#F2F2F2 #CDCDCD #CDCDCD #F2F2F2;
+}
+.accountui .login, .accountui .info {
+	margin-left:8px;
+}
+
+.netui>div {
+	margin-top:5px;
+}
+.netui a {
+	cursor:pointer;
+	text-overflow: ellipsis;
+}
+.adpics img {
+	cursor:pointer;
+}
+
+.netui .hot {
+	overflow:hidden;
+}
+
+.netui .hotthreads li{
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	margin:2px auto;
+	border-bottom:1px #999 dotted;
+	padding: 2px 0px;
+}
+.netui .hotthreads li p{
+	color: #999;
+}
+.netui .hotthreads img{
+	vertical-align:bottom;
+}
+.netui .hotthreads li p:nth-child(2) span:nth-child(2){
+	float:right
+}
+
+a.author,
+a.author:link,
+a.author:visited,
+a.author:active {
+	color: #999;
+	text-decoration: none;
+	cursor:pointer;
+}
+a.author:hover {
+	color: #fff;
+	background: #999;
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+p.tip-warning {
+	margin: 2px auto;
+	padding: 2px 0px 2px 24px;
+	background:url('images/warning.png') no-repeat 4px center, #b81900 url(images/ui-bg_diagonals-thick_18_b81900_40x40.png) 50% 50% repeat;
+	border:1px dashed #cd0a0a;
+	color: #ffffff;
+}
+
+
+.notifybox {
+	color: #333;
+	padding: 8px 8px;
+	position: absolute;
+	top: -999px;
+
+	z-index: 99999999;
+	right:10px;
+	border-radius:0px 0px 5px 5px;
+	border: solid 1px #da7c0c;
+	background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
+	box-shadow: 0px 0px 8px #888;
+}
+.notifybox p{
+	padding-left:40px;
+}
+.notifybox p.info{
+	background:url('images/notify/info.png') no-repeat 0px center;
+}
+.notifybox p.stop{
+	background:url('images/notify/stop.png') no-repeat 0px center;
+}
+.notifybox p.warning{
+	background:url('images/notify/warning.png') no-repeat 0px center;
+}
+.notifybox b{
+	font-size:15px;
+	display:block;
+}
+
+</style>
+</head>
+
+<body>
+<div class="notifybox">
+<p><b></b><span></span></p>
+</div>
+
+<img class="newtip" src="images/tips/new.png" style="position: absolute;float:right;left: 650px;top: 6px;display:none;" />
+
+<div class='top'>
+	<div class="app_title movewindow">
+		<div class="logo"></div>
+	</div>
+</div>
+<div class='content boxauto boxh'>
+	<div class="sheet boxauto boxh">
+		<div class="appui boxauto boxv">
+			<div class="">
+				
+				<span>File：</span><span id="_debug"></span>
+				<span><input class="ti" id="input_file" value="" placeholder="Open a file" /></span>
+				<span><button id="btn_open" class="button medium orange" openmode="openmode">Select File</button></span>
+				<span><button id="btn_setting" class="button medium orange">Settings</button></span>
+				<span><button id="btn_clearnpk" class="button medium green">Restore NPKs</button></span>
+				<!-- <span><button id="btn_searchimg" class="button medium green">Check IMGs</button></span> -->
+				<span class="h"><button id="btn_avatar" class="button medium green">Avatar Simulator</button></span>
+				<span class="h"><button id="btn_easymoder" class="button medium green">One-Key Swap</button></span>
+				<!-- <span><button id="btn_evalscript" class="button small white">Scripts</button></span> -->
+			</div>
+			
+			<div class="appviews boxauto boxh">
+
+				<div class="lcolum boxv">
+					<div class="filesizebar fsmatch"></div>
+					<div id="node1_list" class="listview boxauto"></div>
+					<div><span>Quick Search:<input class="ti" id="input_quicksearch" value=""/></span></div>
+				</div>
+				<div class="rcolum boxv"><!-- no 'boxauto' -->
+					<div id="node2_list" class="listview"></div>
+					<div class="misctoolbar boxh" style="-webkit-box-align:baseline; margin: 2px auto">
+						<p id="checkbox_realcoords" class="checkbox">Actual Coordinates</p>
+						<p id="checkbox_animated" class="checkbox">Animation</p>
+						<p><span>Background Color:</span><input type="hidden" id="input_picker_bg" size="6" /></p>
+						<p id="option_palette_index" class="h">
+							<span>Palette: </span><select id="select_palette_index"></select>
+							<span><button id="btn_modpalette" class="button small orange">View</button></span>
+						</p>
+					</div>
+					<div class="misctoolbar boxh" style="-webkit-box-align:baseline; margin: 2px auto">
+						<p id="checkbox_dodge" class="checkbox">Simulate Dodge: </p>
+						<p id="checkbox_colormultiply" class="checkbox"><span>Color Multiply::</span></p>
+						<p style="margin-left:-20px"><input type="hidden" id="input_picker_cm" size="6" /></p>
+					</div>
+					<!-- 
+					<div class="misctoolbar boxh" style="-webkit-box-align:baseline; margin: 2px auto">
+						<p id="checkbox_coordscontrol_fixedx" class="checkbox">Fixed X axis</p>
+						<p id="checkbox_coordscontrol_fixedy" class="checkbox">Fixed Y axis</p>
+					</div>
+					<div class="misctoolbar boxh" style="-webkit-box-align:baseline; margin: 2px auto">
+						<span id="coordscontrol_num">Coordinate</span>
+						<span id="coordscontrol_offset">Offset</span>
+					</div>
+					-->
+					<div class="boxauto boxv">
+						<div class="imagebox boxauto" ref="mainview"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="netui boxv"><div></div>
+			<div class="accountui boxh">
+				<div class='avatarimg boxv'>
+					<p class='boxauto'><img class="avatar" src="images/account/noavatar_small.gif" /></p>
+					<p class=''><button id="btn_logout" class="button small white" style="margin-top:5px;" disabled="disabled">Log out</button></p>
+				</div>
+				<div class='login '>
+					<p><a href="javascript:show_login();">Log in</a></p>
+					<p><a href="javascript:show_register();">Register</a></p>
+					<p><a href="javascript:show_findpassword();">Forget Password?</a></p>
+				</div>
+				<div class="info h">
+				</div>
+			</div>
+			<div>
+				<!--
+				<form id="searchequips">
+				<span>Equipment: </span><input class="ti" id="input_searchequip" name="kw" style="width:90px; margin:0px 5px" placeholder="Searching Equipment" /><button type="submit" class="button small rosy">Go</button>
+				</form>
+				-->
+				<form id="searchthreads" style="margin-top:5px;">
+				<span>Mod：</span><input class="ti" id="input_searchmod" name="kw" style="width:90px; margin:0px 5px" placeholder="Search Threads" /><button type="submit" class="button small rosy">Go</button>
+				</form>
+			</div>
+			<div class="common">
+				<!--
+				<ul class="adpics">
+				<li><img src="images/ads/func1.gif" onclick="site_click('http://bbs.exrpg.com/thread-106950-1-1.html')"></li>
+				<li><img src="images/ads/func5.gif" onclick="site_click('http://bbs.exrpg.com/thread-109839-1-1.html')"></li>
+				<li><img src="images/ads/func3.gif" onclick="site_click('http://bbs.exrpg.com/thread-106952-1-1.html')"></li>
+				<li><img src="images/ads/func4.gif" onclick="site_click('http://bbs.exrpg.com/thread-106953-1-1.html')"></li>
+				</ul>
+				-->
+				<div id="adpics_control" style="border-top:#999 1px dashed;height:5px;" onclick="$('.adpics').slideToggle(1000)"></div>
+			</div>
+			<div class="hot boxauto h">
+				<p>Latest: </p>
+				<ul id="dnfhotthreads" class="hotthreads">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+	<div id="menu_imglist_item" class="contextmenu">
+		<p menu="swap" acckey="W" style="background-image:url('images/menu_icon_swap.png')"></p>
+		<p menu="swap_cancel">Swap: Reselect</p>
+		<hr />
+		<p menu="relink" acckey="L" style="background-image:url('images/menu_icon_relink.png')"></p>
+		<p menu="relink_cancel">Redirect: Reselect</p>
+		<hr />
+		<p menu="merge_addthis" acckey="V" style="background-image:url('images/menu_icon_add.png')"></p>
+		<p menu="merge_addother" acckey="B" style="background-image:url('images/menu_icon_add.png')">Merge: Add external file (B)...</p>
+		<p menu="merge" style="background-image:url('images/menu_icon_merge.png')"></p>
+		<hr />
+		<p menu="allchecked" acckey="C">Select all (C)</p>
+		<p menu="allunchecked" acckey="X">Deselect all (X)</p>
+		<hr />
+		<p menu="saveas" acckey="S" style="background-image:url('images/menu_icon_save.png')">Save as (S)...</p>
+		<p menu="saveall" acckey="A">Save all Files (A)...</p>
+		<p menu="rename" acckey="N" style="background-image:url('images/menu_icon_rename.png')">Rename (N)...</p>
+		<p menu="password" acckey="P" style="background-image:url('images/menu_icon_lock.png')">Password protect (P)...</p>
+		<p menu="hide" acckey="H">Hide selected (H)...</p>
+		<hr />
+		<p menu="replace" acckey="R" style="background-image:url('images/menu_icon_replace.png')">Replace File (R)...</p>
+		<!-- <p menu="replace_foreign" acckey="F">Replace with files in other versions (F)...</p> -->
+		<hr />
+		<p menu="add" style="background-image:url('images/menu_icon_add.png')">Add a new IMG...</p>
+		<p menu="remove" style="background-image:url('images/menu_icon_remove.png')">Delete IMG...</p>
+	</div>
+	
+	<div id="menu_imglist_space" class="contextmenu">
+		<p menu="refresh" style="background-image:url('images/menu_icon_refresh.png')">Refresh List</p>
+		<p menu="add" style="background-image:url('images/menu_icon_add.png')">Add a new IMG...</p>
+	</div>
+	
+	<div id="menu_imgnodelist_item" class="contextmenu">
+		<p menu="save" style="background-image:url('images/menu_icon_picture_save.png')">Save sprite</p>
+		<p menu="saveall">Save all sprites</p>
+		<p menu="makegif" style="background-image:url('images/menu_icon_gif.png')">Save selected as GIF</p>
+		<hr />
+		<p menu="replace" style="background-image:url('images/menu_icon_replace.png')">Replace sprite...</p>
+		<p menu="hide">Hide selected sprites...</p>
+		<!-- <p menu="modifyimage" class="h">Extention Images Algorithm...(Beta)</p> -->
+		<p menu="relink" style="background-image:url('images/menu_icon_picture_link.png')">Link sprite...</p>
+		<!-- <p menu="relink_batch" style="background-image:url('images/menu_icon_picture_link.png')">Link multiple sprites...(Beta)...</p> -->
+		<p menu="coords" style="background-image:url('images/menu_icon_coords.png')">Modify coordinates...</p>
+		<hr />
+		<p menu="allchecked">Select all</p>
+		<p menu="allunchecked">Deselect all</p>
+		<hr />
+		<p menu="add" style="background-image:url('images/menu_icon_add.png')">Add a new sprite...</p>
+		<p menu="remove" style="background-image:url('images/menu_icon_remove.png')">Remove selected...</p>
+	</div>
+	
+	<div id="menu_imgnodelist_space" class="contextmenu">
+		<p menu="add" style="background-image:url('images/menu_icon_add.png')">Add a new sprite...</p>
+		<p menu="remove" style="background-image:url('images/menu_icon_remove.png')">Remove selected...</p>
+	</div>
+	
+	<div id="dialog-inputcontent" class="dialog h">
+		<p class="dialog-note"></p>
+		<p>
+		<input id="input_content" class="ti" />
+		</p>
+	</div>
+	
+	<div id="dialog-inputcontent-multiline" class="dialog h">
+		<p class="dialog-note"></p>
+		<p>
+			<textarea id="input_content_multiline" wrap="off" class="ti" width="100%" height="100%"></textarea>
+		</p>
+	</div>
+	
+	<div id="dialog-password" class="dialog h">
+		<h1>Password protect an IMG. Protected files cannot be viewed or modified.</h1>
+		<h1>Do not rely on password protections. Absolute security isn't guaranteed.</h1>
+		<h2>Note: 20 Coppers will be deducted after use. (Password removal will not charge Coppers)</h2>
+		<h2>Usage of this feature is not encouraged, unless if you need.</h2>
+		<p style="margin-top:5px;">Files to protect:</p>
+		<p><span class="curFullpath"></span><input id="input_password_imgtarget" type="hidden" /></p>
+		<h1>1. Old password (If this is the first time setting a password, leave this field blank. Just fill New Password)</h1>
+		<p><input id="input_password_old" class="ti" placeholder="If this is the first time setting a password, leave blank" /></p>
+		<h1>2. New password</h1>
+		<p><input id="input_password_new" class="ti" placeholder="To delete password, leave blank" /></p>
+	</div>
+	
+	<div id="dialog-setting" class="dialog h">
+		<h1>1. Output Directory</h1>
+		<p><input id="input_setting_outpath" class="ti" placeholder="Extracted resources will be saved to this directory" /><button id="btn_setting_outpath" class="button small green">Set Directory</button></p>
+		<h1>2. Login Options</h1>
+		<p class="checkbox" option="rememberaccount">Remember me</p>
+		<p class="checkbox" option="autologin">Keep me logged in for two weeks</p>
+		<h1>3. File Association</h1>
+		<span><button id="btn_fileAssociation_npk" class="button medium green">NPK File Association</button><button id="btn_fileAssociation_img" class="button medium green">IMG File Association</button></span>
+		<h1>4. GIF Outputs</h1>
+		<p><span>Frames Interval (ms)：</span><input id="input_setting_gifdelay" class="ti number_only" placeholder="Intervals between frames" /></p>
+		<p><span>GIF Background Color: </span><input id="input_setting_gifbackcolor" class="ti" placeholder="GIF Background Color" /></p>
+		<p><p class="checkbox" option="giftransparent">Trasparent Background</p></p>
+	</div>
+	
+	<div id="dialog-login" class="dialog h">
+		<form id="form_login">
+		<h1>Username</h1>
+		<p><input id="input_login_username" class="ti" placeholder="Enter e-mail or username" style="width:200px" /></p>
+		<h1>Password</h1>
+		<p><input id="input_login_password" class="ti" placeholder="Enter password" style="width:200px" type="password" /></p>
+		<h1>Security Question:</h1>
+		<select id="select_login_question" style="width:210px" onchange="if($(this).val() &gt; 0){$('#input_login_answer').removeAttr('disabled');}else{$('#input_login_answer').attr('disabled','disabled').val('');}" >
+			<option value="0">No Security Question</option>
+			<option value="1">Mother's name</option>
+			<option value="2">Grandfather's name</option>
+			<option value="3">Father's birthplace</option>
+			<option value="4">One of your teacher's name</option>
+			<option value="5">Your computer type</option>
+			<option value="6">The name of your favorite restaurant</option>
+			<option value="7">The last four digits of your driver's license</option>
+		</select>
+		
+		<p><h1>Answer: </h1><input id="input_login_answer" class="ti" placeholder="Enter answer" style="width:200px" /></p>
+		<br />
+		<p class="checkbox" option="rememberaccount">Remember me</p>
+		<p class="checkbox" option="autologin">Keep me logged in for two weeks</p>
+		</form>
+	</div>
+	
+	<div id="dialog-easymoder" class="dialog h">
+		<h1>EXRPG avatar simulator codes can be used for One-Key avatar swap.</h1>
+		<h1>This feature is not perfect and doesn't guarantee desired results. For example, dodge layers will not function.</h1>
+		<h2>Note: The version of the database must be the same as the version of your client, and make sure to remove any third-party patches through Restore NPK feature. This function requires 15 Coppers.</h2>
+		<h2>Warning: If this isn't the first time using this, use your original avatar simulator code, rather than the changed avatar code at first.</h2>
+		<h2>Recovery: Return to main interface to perform Restore NPK.</h2>
+		<h1>1. Clean up NPK to ensure there's no conflicts of avatars</h1>
+		<p class="checkbox" option="easymoder_clearnpk"><b>I have returned to main interface and Restored MPKs and rerun the game once to restore all files. I ensure there are no third-party patches. (Click me to agree)</b></p>
+		<h1>2. Select your Imagepacks2 directory</h1>
+		<p><input id="input_easymoder_path" class="ti" /><button id="btn_easymoder_path" class="button small green">Location Directory</button></p>
+		<h1>3. Code of current avatar <a href="#" onclick="site_click('http://bbs.exrpg.com/thread-109831-1-1.html')">Avatar Code?</a></h1>
+		<p><input id="input_easymoder_code1" class="ti" /></p>
+		<h1>4. Code of desired avatar</h1>
+		<p><input id="input_easymoder_code2" class="ti" placeholder="Supports different versions, but not across classes like MSlayer to FSlayer" /></p>
+		<h1>5. Disclaimer <a href="#" onclick="site_click('http://bbs.exrpg.com/thread-109829-1-1.html')">See Disclaimers</a></h1>
+		<p class="checkbox" option="easymoder_readtip"><b>I have read and agreed the above. (Click me to agree)</b></p>
+		<p class="checkbox" option="easymoder_localres"><b>Use original resources (Using original files will reduce chances of errors)</b></p>
+	</div>
+
+	<div id="dialog-clearnpk" class="dialog h">
+		<h1>1. Select any NPK in your ImagePacks2 directory to confirm your client path</h1>
+		<p><input id="input_clearnpk_path" class="ti" /><button id="btn_clearnpk_path" class="button small green">Browse...</button></p>
+		<h1>2. Clean up options</h1>	
+		<p class="checkbox" option="onlysize">Only compare filesizes, with no binary checks (Faster but not always exact)</p>
+		<p class="checkbox" option="confirm">Ensure before deleting files</p>
+		<h1>3. Select files to clean up</h1>
+		<div style="padding-top:5px;">
+			<button ref="(ImagePacks|SoundPacks).*" class="clearnpk button small red">Clean up all files</button>
+			<button ref="ImagePacks2\\sprite_character_[^_]+_(at)?equipment_(avatar|growtype).*" class="clearnpk button small blue">All avatars</button>
+			<button ref="ImagePacks2\\sprite_character_[^_]+_effect.*" class="clearnpk button small blue">All skills</button>
+			<button ref="ImagePacks2\\sprite_character_[^_]+_(at)?equipment_weapon.*" class="clearnpk button small blue">All weapons</button>
+		</div>
+		<div style="padding-top:5px;">
+			<button ref="ImagePacks2\\sprite_interface.*" class="clearnpk button small blue">Clean Interface</button>
+			<button ref="ImagePacks2\\sprite_creature.*" class="clearnpk button small blue">Clean Creatures</button>
+			<button ref="ImagePacks2\\sprite_(map|worldmap).*" class="clearnpk button small blue">Clean Map Tiles</button>
+			<button ref="ImagePacks2\\sprite_monster.*" class="clearnpk button small blue">Clean Monsters</button>
+			<button ref="ImagePacks2\\sprite_(?!character|interface|creature|map|worldmap|monster).*" class="clearnpk button small blue">Clean Others</button>
+		</div>
+	
+		<div style="padding-top:5px;">
+			<h2>Clean class-spacified files</h2>
+			<select id="clearnpk_target" style="margin-top:5px">
+				<option value="swordman">MSlayer(Swordman)</option>
+				<option value="atswordman">FSlayer(AtSwordman)</option>
+				<option value="demonicswordman">Dark Knight(DemonicSwordman)</option>
+				<option value="demoniclancer">Demonic Lancer(DemonicLancer)</option>
+				<option value="gunner">MGunner (Gunner)</option>
+				<option value="atgunner">FGunner(AtGunner)</option>
+				<option value="fighter">FFighter (Fighter)</option>
+				<option value="atfighter">MFighter (AtFighter)</option>
+				<option value="mage">FMage(Mage) / Creator(CreatorMage)</option>
+				<option value="atmage">MMage (AtMage)</option>
+				<option value="priest">MPriest(Priest)</option>
+				<option value="atpriest">FPriest(AtPriest)</option>
+				<option value="thief">Thief (Thief)</option>
+				<option value="knight">Knight (Knight)</option>
+			</select>
+			<button ref="0" class="clearnpk2 button small blue">Clean avatars</button>
+			<button ref="1" class="clearnpk2 button small blue">Clean skills</button>
+			<button ref="2" class="clearnpk2 button small blue">Clean weapons</button>
+		</div>
+	</div>
+	<!-- 
+	<div id="dialog-searchimg" class="dialog h">
+		<h1>1. Select NPK Directory</h1>
+		<p><input id="input_searchimg_folder" class="ti" /><button id="btn_searchimg_path" class="button small green">Locate Directory</button></p>
+		<h1>2. Search IMG Path</h1>
+		<input id="input_searchimg_imgpath" class="ti" />
+	</div>
+	<div id="dialog-searchimg-result" class="dialog h">
+		<h1>1. Check result</h1>
+		<h1>Double click to open files</h1>
+		<p><div id="list-searchimg" class="listview"></div></p>
+		<h1>2. Operations</h1>
+		<button ref="0" class="button small blue">Copy List</button>
+	</div>
+	-->
+
+	<div id="dialog-mergeimg" class="dialog h">	
+		<h1>1. Merge Queue</h1>
+		<h1>Click and drag to change the merge order. The top is top layer, bottom is bottom layer.</h1>
+		<!-- <p style="margin:5px 0px">If it is avatar or weapoon files (Custom file name IMGs not supported), you can <cashfont>pay 1 Copper per file</cashfont>to let the server help you <button id="btn_mergeimg_autosort" class="button small rosy">automatically sort</button></p> -->
+		<!-- <p style="margin:5px 0px">If there are any across-NPK files (IMGs in another NPK exist in queue), you need<cashfont>1 more Copper per file</cashfont></p> -->
+		<p><div id="list-mergeimg" class="listview" style="background:#FFF url(images/tips/merge_list_bg.gif) no-repeat 230px 30px;"></div></p>
+		<p><div id="list-mergeimg-trash" style="margin:5px 0px;width:675px;height:45px;background:#005DC3 url(images/tips/merge_trash.gif) no-repeat 0px 0px;"></div></p>
+		<p>* Click the trash bin to clear the queue</p>
+		<h1>2. Replace the target（In current NPK）</h1>
+		<p><input id="input_mergeimg_imgpath" class="ti" readonly="readonly" disabled="disabled" /></p>
+		<!-- 
+		<h1>3. Merge Options</h1>	
+		<div class="checkboxs checkbox-mergeimg">
+			<p ref='H'>Hide the files in queue (Only supports IMGs in NPK. Otherwise hidden files are ignored.)</p>
+			<p ref='F'>And fill the NPK to keep the size (Will only take effect in case of the above option).</p>
+		</div>
+		-->
+		<p class='tip-warning' >Final merged IMG is of Version 2. The palette editing is temporarily not supported. The color bits depends on the target color bits</p>
+	</div>
+	
+	<div id="dialog-mergeaddother" class="dialog h">
+		<p>Support NPK, SPK, IMG, ZIP (no password)</p>
+		<p>When choosing NPK, SPK, etc, this kind of files may consists of more than one IMG. You must <b>add "|IMG child path"</b> after every paths to make effect in Merge or auto sort. Otherwise an error would occurred. Use <b>Commas (,)</b>to separate to choose multiple files.</p>
+		<h1>External Merged Files <a href="javascript:;" id="a_mergeaddother_localpath">[Click this to choose files]</a></h1>
+		<p><input id="input_mergeaddother_path" class="ti" />
+		</p>	
+	</div>
+	
+	<div id="dialog-newimg" class="dialog h">
+		<p class="dialog-note"></p>
+		<p>[Required] Full file path:</p>
+		<p><input id="input_newimg_path" class="ti" /></p>
+		<p>[Required] File version:</p>
+		<p>
+		<select id="select_newimg_version" style="margin-top:5px">
+			<option value="1">V1</option>
+			<option value="2" selected>V2</option>
+			<option value="4">V4</option>
+			<option value="5">V5</option>
+			<option value="6">V6</option>
+		</select>
+		</p>	
+		<p>[Optional] Image counts: </p>
+		<p><input id="input_newimg_nodecount" class="ti number_only" /></p>
+		<p>[Optional] Location: (Fill non-negative numbers as insering after Nth in current file, and fill negative numbers as counting backwards)</p>
+		<p><input id="input_newimg_position" class="ti number_only" /></p>
+	</div>
+	
+	<div id="dialog-replaceimage" class="dialog h">
+		<h1>1. Which resources to modify?</h1>
+		<div id="radios_replaceimage_nodes" class="radios">
+			<p ref='1'>Modify currently selected No. [ <span class="curIndex"></span>  ]</p>
+			<p ref='2'>Modify all</p>
+			<p ref='3'>Modify all selected</p>
+		</div>
+		<h1>2. Resource location? [Click text box to select file or path]</h1>
+		<p><input id="input_replaceimage_respath" class="ti" /></p>
+		<h1>3. Color bits?</h1>
+		<p id="tip_replaceimage_colors" class='tip-warning' >As for Ver4, Ver6 files (palettes included), please save as 32-bit color. Otherwise effect will not be taken. Meanwhile, palettes features in changed sprites will be lost. Currently, 8-bit color is temporarily not supported.</p>
+		<div class="radios radio-colors">
+			<p ref='0'>Original - DXTn type will be saved as 1555 or 4444<span class="curColor"></span></p>
+			<p ref='161'>16bit [1555] - High Color, Only supports transparency and opacity, No translucent support</p>
+			<p ref='162'>16bit [4444] - High Color, Supports translucency, but high color distortion </p>
+			<p ref='32' >32bit [8888] - True Color, Supports full transparency and full color gradient, Largest size</p>
+		</div>
+		<h1>4. Replace Options</h1>	
+		<div class="checkboxs checkbox-replaceimage">
+			<p ref='F'>Fix coordinates to accommodate new image. (If not selected, the original coordinate value will not change.)</p>
+		</div>
+	</div>
+	
+	<div id="dialog-relinkimage" class="dialog h">
+		<h1>1. Which resources to modify?</h1>
+		<div id="radios_relinkimage_nodes" class="radios">
+			<p ref='1'>Modify currently selected No. [ <span class="curIndex"></span>  ]</p>
+			<p ref='2'>Modify all (Redirected sprites not included)</p>
+			<p ref='3'>Modify all selected</p>
+		</div>
+		<h1>2，Modification options [Tick only what you wish to change]</h1>
+		<h2>Note: Redirecting target cannot be still redirection.</h2>
+		<p><input id="input_relinkimage_linkto" class="ti number_only" /></p>
+	</div>
+	
+	<div id="dialog-modcoords" class="dialog h">
+		<h1>1. Which resources to modify?</h1>
+		<div id="radios_modcoords_nodes" class="radios">
+			<p ref='1'>Modify currently selected No. [ <span class="curIndex"></span>  ]</p>
+			<p ref='2'>Modify all</p>
+			<p ref='3'>Modify all selected</p>
+		</div>
+		<h1>2. Modification options [Tick only what you wish to change]</h1>
+		<div class="checkboxs checkbox-coords">
+			<p>X：</p><input id="input_modcoords_x" class="ti number_only" />
+			<p>Y：</p><input id="input_modcoords_y" class="ti number_only" />
+			<p>Frame Width:</p><input id="input_modcoords_w" class="ti number_only" />
+			<p>Frame Height:</p><input id="input_modcoords_h" class="ti number_only" />
+			<p id="checkbox_modcoords_r">* Alter relative coordinates [Filled in values will add or subtract from existing values]</p>
+		</div>
+	</div>
+	
+	<div id="dialog-modifyimage" class="dialog h">
+		<h1>1. Which resources to modify?</h1>
+		<div id="radios_modifyimage_nodes" class="radios">
+			<p ref='1'>Modify currently selected No. [ <span class="curIndex"></span>  ]</p>
+			<p ref='2'>Modify all</p>
+			<p ref='3'>Modify all selected</p>
+		</div>
+		<h1>2. Modification algorithm</h1>	
+		<div id="radios_modifyimage_mode" class="radios">
+			<p ref='1'>Expand the coodinates to the image</p>
+			<p ref='2'>Tailor the transparent edge / shrink the coorinates from the image</p>
+			<p ref='3'>Simulate Linear Dodge</p>
+			<p ref='4'>Simulate Dye</p>
+		</div>
+		<h1>3. Modification options</h1>
+		<div class="checkboxs checkbox-modifyimage">
+			<p ref='F'>Fix coordinates</p>
+			<p ref='C'>Expand the area color fill [By default transparent fill if not ticked]</p>
+		</div>
+	</div>
+
+	<div id="dialog-modpalette" class="dialog h">
+		<h1>Modifying <select id="modpalette_select_palette_index" style="margin-bottom:2px"></select></h1>
+		<div id="modpalette_paletteview" class="paletteview"></div>
+		<div id="modpalette_imageview" class=""></div>
+	</div>
+
+	<div id="dialog-newimgnode" class="dialog h">
+		<p class="dialog-note"></p>
+		<p>[Required] Sprites counts to add: </p>
+		<p><input id="input_newimgnode_count" class="ti number_only" /></p>
+		<p>[Optional] Location: (Fill non-negative numbers as insering after Nth in current file, and fill negative numbers as counting backwards)</p>
+		<p><input id="input_newimgnode_position" class="ti number_only" /></p>
+	</div>
+	
+	<div id="dialog-foreignimg" class="dialog h">
+		<h2>Note: Coppers will be paid after replacing successfully, but they won't be paid if not successfully.</h2>
+		<h1>Please confirm the availability of the path. Otherwise the server will be unable to find the resource in customized path.</h1>
+		<h1>The path of the new file to download: </h1>
+		<p><input id="input_foreignimg_imgpath" class="ti" /></p>
+		<p style="margin-top:5px;">Replace files within NPK:</p>
+		<p><span class="curFullpath"></span><input id="input_foreignimg_replacepath" type="hidden" /></p>
+		<h1>Which version to replace?</h1>
+
+		<button class="button white taskbtn" ref="exrpg">Get EXRPG IMG Server Resource [EXRPG]<br /><span style="color:red">Recommended![ 3 Coppers，Complete resources，Fast download]</span></button>
+		<button class="button white taskbtn" ref="kortest">KDNF Test Server [KORTEST] - <span style="color:red">[ 2 Coppers ]</span></button>
+		<button class="button white taskbtn" ref="kor">KDNF [KOR] - <span style="color:red">[ 1 Coppers ]</span></button>
+		<button class="button white taskbtn" ref="jpn">ARAD [JPN] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="chn">CDNF [CHN] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="tw">TDNF [TW] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="usa">DFOG [USA] - <span style="color:green">[FREE]</span></button>
+	</div>
+	<!-- 
+	<div id="dialog-downloadpackage" class="dialog h">
+		<h2>Note: Coppers will be paid after replacing successfully, but they won't be paid if not successfully.</h2>
+		<h1>The path of the new file to download: </h1>
+		<p><input id="input_downloadpackage_npkpath" class="ti" /></p>
+		<h1>Which version to replace?</h1>
+		<button class="button white taskbtn" ref="kortest">KDNF Test Server [KORTEST] - <span style="color:red">[ 1 Copper per file, based on file number ]</span></button>
+		<button class="button white taskbtn" ref="kor">KDNF [KOR] - <span style="color:red">[ 1 Copper per file, based on file number ]</span></button>
+		<button class="button white taskbtn" ref="jpn">ARAD [JPN] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="chn">CDNF [CHN] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="tw">TDNF [TW] - <span style="color:green">[FREE]</span></button>
+		<button class="button white taskbtn" ref="usa">DFOG [USA] - <span style="color:green">[FREE]</span></button>
+	</div>
+	-->
+
+	<div id="dialog-progress" class="dialog h">
+		<p class="progress-note"></p>
+		<p class="progressbar"></p>
+	</div>
+
+	<div id="dialog-nocopper" class="dialog h">
+		<h1 id="txt_nocopper_tip" ></h1>
+		<div style="width:425px;height:255px;background:url(images/tips/nocopper.png) no-repeat 0px 0px;"></div>
+		<span><button id="btn_nocopper_task" class="button green">任务通道</button></span>
+		<span><button id="btn_nocopper_exchange" class="button green">兑换通道</button></span>
+		<span><button id="btn_nocopper_act" class="button green">活动通道</button></span>
+		<span><button id="btn_nocopper_donation" class="button green">捐助通道</button></span>
+	</div>
+	<!-- 
+	<div id="dialog-freeauthority" class="dialog h">
+		<h1>为了回馈感谢常关注 EXRPG 的会员们，您有机会可以继续免权零铜板使用。</h1>
+		<h1>以下内容为您的账号在 EXRPG 的活跃统计（统计截止日期为2017年6月1日）</h1>
+		<br />
+		<table>
+			<thead>
+				<th>统计条目</th>
+				<th>目标达成</th>
+				</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>2010年6月至今DNF区有效主题帖</td>
+				<td><span id="freeauthority_c1">?</span> 次 * 0.3天</td>
+			</tr>
+			<tr>
+				<td>2010年6月至今DNF区有效回帖</td>
+				<td><span id="freeauthority_c2">?</span> 次 * 0.1天</td>
+			</tr>
+			<tr>
+				<td>2010年6月至今评分帖子</td>
+				<td><span id="freeauthority_c3">?</span> 次 * 0.1天</td>
+			</tr>
+			<tr>
+				<td>被收听人数</td>
+				<td><span id="freeauthority_c4">?</span> 人 * 2天</td>
+			</tr>
+			<tr>
+				<td>2012年2月至5月签到天数</td>
+				<td><span id="freeauthority_c5">?</span> 次 * 0.2天</td>
+			</tr>
+			<tr>
+				<td>模型区精华贴数</td>
+				<td><span id="freeauthority_c6">?</span> * 4天</td>
+			</tr>
+			<tr>
+				<td>2010年至今在模型解答区最终答案被选中次数</td>
+				<td><span id="freeauthority_c7">?</span> * 1天</td>
+			</tr>
+			<tr>
+				<td>捐助论坛建设</td>
+				<td><span id="freeauthority_c8">?</span> * 2天</td>
+			</tr>
+			<tr>
+				<td>附加奖励</td>
+				<td><span id="freeauthority_bonus">?</span> 天</td>
+			</tr>
+			</tbody>
+		</table>
+		<br />
+		<h1>总合计</h1>
+		<p>合计免权期天数：<span id="freeauthority_days">?</span> 天</p>
+		<p>免权期失效于：<span id="freeauthority_deadline">?</span></p>
+		<br />
+		<span><button id="btn_freeauthority_yes" class="button green">查看我的免权期天数并领取</button></span>
+		<span><button id="btn_freeauthority_no" class="button green">不使用</button></span>
+	</div>
+	-->
+</body>
+<script src="app.js" type="text/javascript"></script>
+</html>
